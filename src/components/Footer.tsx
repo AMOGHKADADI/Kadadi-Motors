@@ -1,0 +1,162 @@
+import React from 'react';
+import { Logo } from './Logo';
+import { BUSINESS_INFO } from '../data/insuranceData';
+import { MapPin, Phone, Mail, Clock, MessageSquare, ArrowUpRight, Shield, Heart } from 'lucide-react';
+
+interface FooterProps {
+  onNavigate: (sectionId: string) => void;
+  onOpenQuoteModal: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) => {
+  return (
+    <footer className="bg-slate-950 text-slate-300 border-t border-slate-800">
+      
+      {/* Top Footer Banner */}
+      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-slate-950 py-12 px-4 sm:px-6 border-b border-slate-800/80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1 text-center md:text-left">
+            <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-white">
+              Looking for Independent Insurance Advice in Bidar?
+            </h3>
+            <p className="text-slate-400 text-xs sm:text-sm">
+              Visit our Udgir Road office or speak directly with Chandrakant Kadadi.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <button
+              onClick={onOpenQuoteModal}
+              className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition-all"
+            >
+              Request Free Policy Review
+            </button>
+            <a
+              href={BUSINESS_INFO.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-all flex items-center gap-1.5"
+            >
+              <MapPin className="w-4 h-4 text-blue-400" />
+              <span>Get Directions</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Footer Links & Info */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+          
+          {/* Brand Col */}
+          <div className="lg:col-span-4 space-y-4">
+            <Logo variant="light" showSubtitle={true} />
+            
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
+              Kadadi Motors is Bidar’s premier independent insurance advisory firm, serving families, transporters, and enterprises for over twenty-five years with integrity, technical expertise, and personal claim advocacy.
+            </p>
+
+            <div className="pt-2 flex items-center gap-2 text-xs text-amber-400 font-semibold">
+              <Shield className="w-4 h-4" />
+              <span>Founder: {BUSINESS_INFO.founder} (Est. {BUSINESS_INFO.establishedYear})</span>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Quick Navigation</h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button onClick={() => onNavigate('home')} className="hover:text-amber-400 transition-colors">Home Page</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('about')} className="hover:text-amber-400 transition-colors">About Kadadi Motors</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('solutions')} className="hover:text-amber-400 transition-colors">Insurance Solutions</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('process')} className="hover:text-amber-400 transition-colors">Advisory Process</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('claims-renewals')} className="hover:text-amber-400 transition-colors">Claims & Renewals</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('partners')} className="hover:text-amber-400 transition-colors">Partner Insurers</button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('contact')} className="hover:text-amber-400 transition-colors">Contact & Map</button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Solutions Column */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Major Categories</h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>Health & Family Floater Insurance</li>
+              <li>Car & Bike Two-Wheeler Insurance</li>
+              <li>Commercial Truck, Taxi & Bus Fleet</li>
+              <li>Life & Pure Term Insurance</li>
+              <li>Home, Shop & Property Fire Insurance</li>
+              <li>Contractors CAR & Engineering Cover</li>
+              <li>Proactive Policy Renewals & Claims</li>
+            </ul>
+          </div>
+
+          {/* Contact Details */}
+          <div className="lg:col-span-3 space-y-3">
+            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Headquarters Contact</h4>
+            
+            <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{BUSINESS_INFO.address}</span>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-blue-400 shrink-0" />
+                <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="hover:text-amber-400 font-bold">{BUSINESS_INFO.phoneDisplay}</a>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+                <a href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}`} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400">
+                  WhatsApp: +91 {BUSINESS_INFO.whatsappRaw}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
+                <a href={`mailto:${BUSINESS_INFO.email}`} className="hover:text-amber-400">{BUSINESS_INFO.email}</a>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Hours: {BUSINESS_INFO.hours}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Legal Disclaimer Box */}
+        <div className="mt-12 p-4 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-400 leading-relaxed space-y-1">
+          <p className="font-bold text-slate-300 uppercase tracking-wide">Regulatory & Legal Notice:</p>
+          <p>
+            Kadadi Motors is an independent insurance advisory and policy service provider in Bidar, Karnataka. We act as an intermediary helping clients compare and secure policies from multiple authorized public and private general and life insurance companies in India. Kadadi Motors is not an insurance company or underwriter. Policy coverage, underwriting terms, and claim approvals are subject to the respective insurance company's guidelines.
+          </p>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+          <p>© {new Date().getFullYear()} Kadadi Motors. All rights reserved. Bidar, Karnataka, India.</p>
+          <p className="flex items-center gap-1">
+            <span>Built for Trust & Longevity</span>
+          </p>
+        </div>
+
+      </div>
+    </footer>
+  );
+};
