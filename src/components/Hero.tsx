@@ -1,166 +1,138 @@
 import React from 'react';
 import { BUSINESS_INFO } from '../data/insuranceData';
-import { Shield, ArrowRight, PhoneCall, CheckCircle2, Award, Users, Scale, MapPin } from 'lucide-react';
+import heroImg from '../assets/images/cinematic_luxury_hero_1785494208474.jpg';
+import logoImg from '../assets/images/kadadi_motors_logo_1785494192983.jpg';
+import {
+  ShieldCheck,
+  FileText,
+  MessageSquare,
+  Award,
+  PhoneCall,
+  CheckCircle2,
+  ChevronRight,
+  Sparkles,
+  Users,
+  MapPin
+} from 'lucide-react';
 
 interface HeroProps {
-  onExploreSolutions: () => void;
-  onContactExpert: () => void;
   onOpenQuoteModal: () => void;
+  onOpenChecklistModal: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
-  onExploreSolutions,
-  onContactExpert,
   onOpenQuoteModal,
+  onOpenChecklistModal,
+  onNavigate
 }) => {
   return (
-    <section className="relative overflow-hidden bg-slate-900 text-white pt-12 pb-20 lg:pt-20 lg:pb-28">
-      {/* Background Decorative Pattern & Gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(37,99,235,0.25),rgba(255,255,255,0))]" />
-      <div className="absolute inset-0 bg-grid-slate-800/[0.1] bg-[bottom_1px_center]" />
+    <section id="home" className="relative min-h-[90vh] bg-slate-950 text-white flex items-center justify-center pt-8 pb-16 overflow-hidden border-b border-amber-500/20">
+      
+      {/* Background Cinematic Image Layer */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={heroImg}
+          alt="Kadadi Motors Advisory Background"
+          className="w-full h-full object-cover object-center opacity-30 mix-blend-luminosity scale-105 transition-all duration-1000"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-950/90" />
+      </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
-          {/* Left Column: Emotionally Intelligent Headline & Copy */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
-            
-            {/* Trust Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700/80 text-slate-200 text-xs sm:text-sm font-medium backdrop-blur-sm shadow-inner">
-              <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-              <span>Independent Insurance Advisory • Serving Bidar Since 1999</span>
-            </div>
+      {/* Radiant Amber Sheen */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-5xl xl:text-6xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
-              Protecting What Matters Most Through Every Stage of Life.
-            </h1>
-
-            {/* Supporting Copy */}
-            <p className="text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-relaxed max-w-2xl">
-              For over twenty-five years, <strong className="text-white font-semibold">{BUSINESS_INFO.name}</strong> has helped families, individuals, and businesses across Karnataka navigate complex insurance choices with complete independence, technical clarity, and personal claim advocacy.
-            </p>
-
-            {/* Value Checkpoints */}
-            <div className="grid sm:grid-cols-3 gap-3 pt-2 text-xs sm:text-sm text-slate-300 font-medium">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>100% Unbiased Multi-Insurer Advice</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-blue-400 shrink-0" />
-                <span>Personal Local Claim Support</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>25+ Years Proven Integrity</span>
-              </div>
-            </div>
-
-            {/* Primary & Secondary Call to Action Buttons */}
-            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <button
-                onClick={onOpenQuoteModal}
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 text-sm font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <Shield className="w-5 h-5 text-slate-950" />
-                <span>Request Free Policy Advisory</span>
-              </button>
-
-              <button
-                onClick={onExploreSolutions}
-                className="inline-flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-800 rounded-xl border border-slate-700/80 transition-all duration-200"
-              >
-                <span>Explore Insurance Solutions</span>
-                <ArrowRight className="w-4 h-4 text-blue-400" />
-              </button>
-            </div>
-
-            {/* Direct Quick Contact Bar */}
-            <div className="pt-2 flex items-center gap-4 text-xs text-slate-400 border-t border-slate-800/80">
-              <span className="font-semibold text-slate-300">Direct Advisory Line:</span>
-              <a
-                href={`tel:${BUSINESS_INFO.phoneRaw}`}
-                className="text-amber-400 hover:underline font-bold flex items-center gap-1.5"
-              >
-                <PhoneCall className="w-3.5 h-3.5" />
-                <span>{BUSINESS_INFO.phoneDisplay}</span>
-              </a>
-              <span className="hidden sm:inline text-slate-600">•</span>
-              <span className="hidden sm:inline text-slate-400">Founder: {BUSINESS_INFO.founder}</span>
-            </div>
-
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full space-y-10">
+        
+        {/* Top Floating Badge */}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-black uppercase tracking-widest shadow-xl backdrop-blur-md">
+            <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+            <span>Bidar’s Independent Insurance Advisory Firm • Est. {BUSINESS_INFO.establishedYear}</span>
           </div>
 
-          {/* Right Column: Key Trust Card & Institutional Visual */}
-          <div className="lg:col-span-5">
-            <div className="relative rounded-2xl bg-gradient-to-b from-slate-800/90 to-slate-900/90 p-6 sm:p-8 border border-slate-700/80 shadow-2xl backdrop-blur-xl">
-              
-              {/* Decorative Glow */}
-              <div className="absolute -top-12 -right-12 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-heading font-black text-white tracking-tight max-w-5xl leading-[1.08]">
+            Independent Insurance Advice & <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">
+              Personal Claim Advocacy in Bidar
+            </span>
+          </h1>
 
-              <div className="space-y-6 relative z-10">
-                {/* Header inside card */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-700/60">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-amber-400">
-                      <Award className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold text-white text-base">Quarter Century of Trust</h3>
-                      <p className="text-xs text-slate-400">Est. 1999 • Udgir Road, Bidar</p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-blue-950 text-blue-300 border border-blue-800/50">
-                    5.0 ★ Google Rating
-                  </span>
-                </div>
+          <p className="text-slate-300 text-sm sm:text-lg max-w-3xl font-medium leading-relaxed">
+            Led by <strong>Chandrakant Kadadi (Chandu Kadadi)</strong>, we provide unbiased, multi-insurer comparison and full claim settlement support across Motor, Health, Commercial Fleet, Life, and Shopkeeper Insurance.
+          </p>
+        </div>
 
-                {/* Stat Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <div className="text-2xl sm:text-3xl font-heading font-extrabold text-amber-400">25+</div>
-                    <div className="text-xs text-slate-400 font-medium mt-1">Years serving families & businesses</div>
-                  </div>
+        {/* Major Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-3xl mx-auto">
+          
+          {/* Goated Checklist Hub Button */}
+          <button
+            onClick={() => onNavigate('doc-checklist-hub')}
+            className="px-6 sm:px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-200 text-slate-950 font-black text-xs sm:text-sm shadow-2xl shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+          >
+            <FileText className="w-5 h-5 text-slate-950" aria-hidden="true" />
+            <span>Required Documents Checklist Tool</span>
+          </button>
 
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
-                    <div className="text-2xl sm:text-3xl font-heading font-extrabold text-blue-400">10+</div>
-                    <div className="text-xs text-slate-400 font-medium mt-1">Leading insurance partners compared</div>
-                  </div>
-                </div>
+          {/* Get Policy Advice Button */}
+          <button
+            onClick={onOpenQuoteModal}
+            className="px-6 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm border border-slate-700 transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+          >
+            <ShieldCheck className="w-5 h-5 text-amber-400" aria-hidden="true" />
+            <span>Request Policy Advice</span>
+          </button>
 
-                {/* Key Advisory Promise Box */}
-                <div className="p-4 rounded-xl bg-blue-950/40 border border-blue-800/40 text-xs text-slate-300 space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-white text-sm">
-                    <Scale className="w-4 h-4 text-blue-400" />
-                    <span>Independent & Unbiased</span>
-                  </div>
-                  <p className="leading-relaxed">
-                    We do not sell insurance for a single company. We compare policies across top public and private insurers to ensure your family or business gets the right protection at the right rate.
-                  </p>
-                </div>
+          {/* Direct WhatsApp Button */}
+          <a
+            href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Chandrakant%20Kadadi%20Sir,%20I%20would%20like%20insurance%20advice.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-emerald-600/20 transition-all flex items-center gap-2"
+          >
+            <MessageSquare className="w-5 h-5" aria-hidden="true" />
+            <span>WhatsApp Chandu Kadadi</span>
+          </a>
 
-                {/* Directions Shortcut */}
-                <div className="pt-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Ground Floor, Rishikesh Complex, Beside MAX</span>
-                  </div>
-                  <a
-                    href={BUSINESS_INFO.googleMapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs font-bold text-amber-400 hover:text-amber-300 hover:underline shrink-0"
-                  >
-                    View Map →
-                  </a>
-                </div>
+        </div>
 
-              </div>
+        {/* 3 Executive Trust Pillars */}
+        <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 pt-6 max-w-5xl mx-auto">
+          
+          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-xl flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-400/20 text-amber-400 flex items-center justify-center font-black shrink-0 border border-amber-400/30">
+              25+
+            </div>
+            <div>
+              <h3 className="font-heading font-extrabold text-white text-sm">Years of Trust</h3>
+              <p className="text-xs text-slate-400">Serving Bidar, Udgir Road & Bhalki since 1998.</p>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-xl flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-black shrink-0 border border-blue-500/30">
+              100%
+            </div>
+            <div>
+              <h3 className="font-heading font-extrabold text-white text-sm">Claim Advocacy</h3>
+              <p className="text-xs text-slate-400">Personal guidance until cashless payout.</p>
+            </div>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-xl flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-black shrink-0 border border-emerald-500/30">
+              KM
+            </div>
+            <div>
+              <h3 className="font-heading font-extrabold text-white text-sm">Loyalty Program</h3>
+              <p className="text-xs text-slate-400">Earn KM Points on profile verification.</p>
             </div>
           </div>
 
         </div>
+
       </div>
     </section>
   );

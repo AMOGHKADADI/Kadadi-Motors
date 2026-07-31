@@ -1,7 +1,8 @@
 import React from 'react';
 import { Logo } from './Logo';
 import { BUSINESS_INFO } from '../data/insuranceData';
-import { MapPin, Phone, Mail, Clock, MessageSquare, ArrowUpRight, Shield, Heart } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageSquare, Shield } from 'lucide-react';
+import logoImg from '../assets/images/kadadi_motors_logo_1785494192983.jpg';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
@@ -13,13 +14,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
     <footer className="bg-slate-950 text-slate-300 border-t border-slate-800">
       
       {/* Top Footer Banner */}
-      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-slate-950 py-12 px-4 sm:px-6 border-b border-slate-800/80">
+      <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-slate-950 py-12 px-4 sm:px-6 border-b border-amber-500/20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-white">
+            <h3 className="text-xl sm:text-2xl font-heading font-black text-white tracking-wide">
               Looking for Independent Insurance Advice in Bidar?
             </h3>
-            <p className="text-slate-400 text-xs sm:text-sm">
+            <p className="text-slate-300 text-xs sm:text-sm">
               Visit our Udgir Road office or speak directly with Chandrakant Kadadi.
             </p>
           </div>
@@ -27,7 +28,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               onClick={onOpenQuoteModal}
-              className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition-all"
+              className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
             >
               Request Free Policy Review
             </button>
@@ -35,9 +36,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
               href={BUSINESS_INFO.googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition-all flex items-center gap-1.5"
+              className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs border border-slate-700 transition-all flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
-              <MapPin className="w-4 h-4 text-blue-400" />
+              <MapPin className="w-4 h-4 text-amber-400" aria-hidden="true" />
               <span>Get Directions</span>
             </a>
           </div>
@@ -50,49 +51,51 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
           
           {/* Brand Col */}
           <div className="lg:col-span-4 space-y-4">
-            <Logo variant="light" showSubtitle={true} />
+            <div className="flex items-start gap-3">
+              <Logo variant="light" showSubtitle={true} />
+            </div>
             
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-              Kadadi Motors is Bidar’s premier independent insurance advisory firm, serving families, transporters, and enterprises for over twenty-five years with integrity, technical expertise, and personal claim advocacy.
+              Kadadi Motors is Bidar’s premier independent insurance advisory firm, serving families, transporters, and enterprises for over 25 years with integrity, technical expertise, and personal claim advocacy.
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-amber-400 font-semibold">
-              <Shield className="w-4 h-4" />
+            <div className="pt-1 flex items-center gap-2 text-xs text-amber-400 font-bold bg-slate-900 p-2.5 rounded-xl border border-slate-800 w-fit">
+              <Shield className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
               <span>Founder: {BUSINESS_INFO.founder} (Est. {BUSINESS_INFO.establishedYear})</span>
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="lg:col-span-2 space-y-3">
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Quick Navigation</h4>
+            <h4 className="font-heading font-bold text-white text-xs uppercase tracking-widest text-amber-400">Quick Navigation</h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
-                <button onClick={() => onNavigate('home')} className="hover:text-amber-400 transition-colors">Home Page</button>
+                <button onClick={() => onNavigate('home')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Home Page</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('about')} className="hover:text-amber-400 transition-colors">About Kadadi Motors</button>
+                <button onClick={() => onNavigate('about')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">About Kadadi Motors</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('solutions')} className="hover:text-amber-400 transition-colors">Insurance Solutions</button>
+                <button onClick={() => onNavigate('solutions')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Insurance Solutions</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('process')} className="hover:text-amber-400 transition-colors">Advisory Process</button>
+                <button onClick={() => onNavigate('process')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Advisory Process</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('claims-renewals')} className="hover:text-amber-400 transition-colors">Claims & Renewals</button>
+                <button onClick={() => onNavigate('claims-renewals')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Claims & Renewals</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('partners')} className="hover:text-amber-400 transition-colors">Partner Insurers</button>
+                <button onClick={() => onNavigate('partners')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Partner Insurers</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('contact')} className="hover:text-amber-400 transition-colors">Contact & Map</button>
+                <button onClick={() => onNavigate('contact')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Contact & Map</button>
               </li>
             </ul>
           </div>
 
           {/* Solutions Column */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Major Categories</h4>
+            <h4 className="font-heading font-bold text-white text-xs uppercase tracking-widest text-amber-400">Major Categories</h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>Health & Family Floater Insurance</li>
               <li>Car & Bike Two-Wheeler Insurance</li>
@@ -106,33 +109,33 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
 
           {/* Contact Details */}
           <div className="lg:col-span-3 space-y-3">
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider">Headquarters Contact</h4>
+            <h4 className="font-heading font-bold text-white text-xs uppercase tracking-widest text-amber-400">Headquarters Contact</h4>
             
             <div className="space-y-2.5 text-xs text-slate-300">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
                 <span className="leading-relaxed">{BUSINESS_INFO.address}</span>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-blue-400 shrink-0" />
-                <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="hover:text-amber-400 font-bold">{BUSINESS_INFO.phoneDisplay}</a>
+                <Phone className="w-4 h-4 text-blue-400 shrink-0" aria-hidden="true" />
+                <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="hover:text-amber-400 font-bold focus:outline-none focus-visible:underline">{BUSINESS_INFO.phoneDisplay}</a>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}`} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400">
+                <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+                <a href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}`} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 focus:outline-none focus-visible:underline">
                   WhatsApp: +91 {BUSINESS_INFO.whatsappRaw}
                 </a>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-indigo-400 shrink-0" />
-                <a href={`mailto:${BUSINESS_INFO.email}`} className="hover:text-amber-400">{BUSINESS_INFO.email}</a>
+                <Mail className="w-4 h-4 text-indigo-400 shrink-0" aria-hidden="true" />
+                <a href={`mailto:${BUSINESS_INFO.email}`} className="hover:text-amber-400 focus:outline-none focus-visible:underline">{BUSINESS_INFO.email}</a>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                <Clock className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
                 <span>Hours: {BUSINESS_INFO.hours}</span>
               </div>
             </div>
@@ -151,8 +154,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
         {/* Copyright */}
         <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} Kadadi Motors. All rights reserved. Bidar, Karnataka, India.</p>
-          <p className="flex items-center gap-1">
-            <span>Built for Trust & Longevity</span>
+          <p className="flex items-center gap-1 text-slate-400">
+            <span>Trusted Today • Secure Tomorrow</span>
           </p>
         </div>
 
@@ -160,3 +163,4 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
     </footer>
   );
 };
+

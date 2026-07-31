@@ -1,53 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo';
 import { BUSINESS_INFO } from '../data/insuranceData';
-import { Phone, MapPin, Clock, MessageSquare, Menu, X, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import logoImg from '../assets/images/kadadi_motors_logo_1785494192983.jpg';
+import {
+  Phone,
+  MapPin,
+  Clock,
+  MessageSquare,
+  Menu,
+  X,
+  ShieldCheck,
+  FileText,
+  Trophy,
+  User,
+  Lock,
+  Sparkles,
+  Search,
+  ShieldAlert,
+  SlidersHorizontal,
+  Bell
+} from 'lucide-react';
 
 interface HeaderProps {
   activeSection: string;
   onNavigate: (sectionId: string) => void;
   onOpenQuoteModal: () => void;
+  onOpenChecklistModal: () => void;
+  onOpenSearch?: () => void;
+  onOpenSos?: () => void;
+  onOpenCompare?: () => void;
+  onOpenReminder?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeSection,
   onNavigate,
-  onOpenQuoteModal
+  onOpenQuoteModal,
+  onOpenChecklistModal,
+  onOpenSearch,
+  onOpenSos,
+  onOpenCompare,
+  onOpenReminder
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 30);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [mobileMenuOpen]);
-
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'solutions', label: 'Insurance Solutions' },
-    { id: 'about', label: 'About Advisory' },
-    { id: 'process', label: 'Our Process' },
-    { id: 'claims-renewals', label: 'Claims & Renewals' },
-    { id: 'faq', label: 'FAQs' },
-    { id: 'partners', label: 'Insurers' },
+    { id: 'doc-checklist-hub', label: 'Required Docs', highlight: true, icon: <FileText className="w-3.5 h-3.5 text-amber-400" /> },
+    { id: 'sector-details-view', label: 'Sectors Directory' },
+    { id: 'km-points-leaderboard', label: 'KM Rewards', icon: <Trophy className="w-3.5 h-3.5 text-amber-400" /> },
+    { id: 'customer-portal', label: 'My Profile', icon: <User className="w-3.5 h-3.5 text-blue-400" /> },
+    { id: 'claims-renewals', label: 'Claims & Calculator', icon: <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> },
+    { id: 'about', label: 'About & Partners' },
     { id: 'contact', label: 'Contact & Map' },
+    { id: 'admin-portal-login', label: 'Admin Login', icon: <Lock className="w-3.5 h-3.5 text-rose-400" /> }
   ];
 
   const handleNavClick = (id: string) => {
@@ -57,64 +72,66 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
-      {/* Top Advisory Information Bar */}
-      <div className={`bg-slate-900 text-slate-300 text-xs py-2 px-4 transition-all duration-300 ${isScrolled ? 'hidden md:block opacity-90' : 'block'}`}>
+      {/* Top Hotline Bar */}
+      <div className="bg-slate-950 text-slate-300 text-xs py-2 px-4 border-b border-slate-800/80">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
+          
           <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-[11px] sm:text-xs">
-            <span className="flex items-center gap-1.5 text-slate-300 font-medium">
+            <span className="flex items-center gap-1.5 text-slate-300 font-bold">
               <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
               <span>Udgir Road, Beside MAX, Bidar, Karnataka</span>
             </span>
+
             <span className="hidden lg:flex items-center gap-1.5 text-slate-300">
               <Clock className="w-3.5 h-3.5 text-blue-400 shrink-0" aria-hidden="true" />
               <span>Hours: {BUSINESS_INFO.hours}</span>
             </span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 text-[10px] font-semibold">
+
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 text-[10px] font-extrabold">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-              Open Today
+              Open Today • Chandrakant Kadadi Desk
             </span>
           </div>
 
           <div className="flex items-center gap-4 ml-auto text-[11px] sm:text-xs">
             <a
               href={`tel:${BUSINESS_INFO.phoneRaw}`}
-              className="flex items-center gap-1.5 text-slate-200 hover:text-white font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-sm"
-              aria-label={`Call Advisory Desk at ${BUSINESS_INFO.phoneDisplay}`}
+              className="flex items-center gap-1.5 text-slate-200 hover:text-white font-extrabold transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
+              <Phone className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
               <span>{BUSINESS_INFO.phoneDisplay}</span>
             </a>
+
             <span className="text-slate-700" aria-hidden="true">|</span>
+
             <a
-              href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hello%20Kadadi%20Motors,%20I%20would%20like%20insurance%20guidance.`}
+              href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Chandrakant%20Kadadi%20Sir,%20I%20need%20insurance%20advice.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 rounded-sm"
-              aria-label="Chat with Kadadi Motors Advisory on WhatsApp"
+              className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-extrabold transition-colors"
             >
               <MessageSquare className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>WhatsApp Advisory</span>
+              <span>WhatsApp Desk</span>
             </a>
           </div>
+
         </div>
       </div>
 
       {/* Main Glass Navigation Bar */}
-      <div
-        className={`w-full transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-slate-200/80 py-2.5'
-            : 'bg-white border-b border-slate-100 py-3.5'
-        }`}
-      >
+      <div className={`w-full transition-all duration-300 ${
+        isScrolled
+          ? 'bg-slate-950/95 backdrop-blur-xl shadow-2xl border-b border-amber-500/20 py-2.5'
+          : 'bg-slate-950 border-b border-slate-900 py-3.5'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+          
           {/* Logo */}
           <button
             onClick={() => handleNavClick('home')}
-            className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg p-1"
-            aria-label="Kadadi Motors Home Page"
+            className="flex items-center gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 rounded-xl"
           >
-            <Logo variant="default" showSubtitle={!isScrolled} />
+            <Logo variant="light" showSubtitle={!isScrolled} />
           </button>
 
           {/* Desktop Navigation Links */}
@@ -125,142 +142,143 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`px-3 py-2 text-xs xl:text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
+                  className={`px-3 py-2 text-xs xl:text-sm font-extrabold rounded-xl transition-all duration-200 flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
                     isActive
-                      ? 'bg-blue-50 text-blue-800 font-bold'
-                      : 'text-slate-700 hover:text-blue-700 hover:bg-slate-50'
+                      ? 'bg-amber-400 text-slate-950 font-black shadow-md'
+                      : item.highlight
+                      ? 'bg-amber-400/10 text-amber-300 border border-amber-500/30 hover:bg-amber-400/20'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-900'
                   }`}
                 >
-                  {item.label}
+                  {item.icon}
+                  <span>{item.label}</span>
                 </button>
               );
             })}
           </nav>
 
           {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-2.5">
-            <a
-              href={BUSINESS_INFO.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 hover:text-slate-900 rounded-lg border border-slate-200 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Open Office Location in Bidar on Google Maps"
-            >
-              <MapPin className="w-3.5 h-3.5 text-blue-600" aria-hidden="true" />
-              <span>Directions</span>
-              <ArrowUpRight className="w-3 h-3 text-slate-400" aria-hidden="true" />
-            </a>
+          <div className="hidden sm:flex items-center gap-2">
+            {onOpenSearch && (
+              <button
+                onClick={onOpenSearch}
+                className="p-2 text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-800 transition-all focus:outline-none"
+                title="Global Search (Ctrl+K)"
+              >
+                <Search className="w-4 h-4 text-amber-400" aria-hidden="true" />
+              </button>
+            )}
+
+            {onOpenSos && (
+              <button
+                onClick={onOpenSos}
+                className="px-3 py-2 text-xs font-black text-rose-300 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 rounded-xl transition-all flex items-center gap-1.5 focus:outline-none"
+                title="24/7 Accident & Hospital Claim Assistance"
+              >
+                <ShieldAlert className="w-4 h-4 text-rose-400 animate-pulse" aria-hidden="true" />
+                <span>SOS Claim</span>
+              </button>
+            )}
+
+            {onOpenCompare && (
+              <button
+                onClick={onOpenCompare}
+                className="px-3 py-2 text-xs font-bold text-slate-300 bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-800 transition-all flex items-center gap-1.5 focus:outline-none"
+                title="Side-by-Side Policy Plan Comparison"
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
+                <span className="hidden xl:inline">Compare</span>
+              </button>
+            )}
+
+            {onOpenReminder && (
+              <button
+                onClick={onOpenReminder}
+                className="p-2 text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 rounded-xl border border-slate-800 transition-all focus:outline-none"
+                title="Set Renewal Reminder"
+              >
+                <Bell className="w-4 h-4 text-amber-400" aria-hidden="true" />
+              </button>
+            )}
 
             <button
               onClick={onOpenQuoteModal}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-sm hover:shadow transition-all transform active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
-              aria-label="Open form to get personal policy advice"
+              className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-black text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 rounded-xl shadow-lg transition-all focus:outline-none"
             >
-              <ShieldCheck className="w-4 h-4 text-amber-300" aria-hidden="true" />
+              <ShieldCheck className="w-4 h-4 text-slate-950" aria-hidden="true" />
               <span>Get Policy Advice</span>
             </button>
           </div>
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Menu Toggle */}
           <div className="flex sm:hidden items-center gap-2">
             <button
-              onClick={onOpenQuoteModal}
-              className="inline-flex items-center justify-center p-2 rounded-lg bg-blue-700 text-white text-xs font-bold shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label="Request Quote Modal"
+              onClick={onOpenChecklistModal}
+              className="p-2 rounded-xl bg-amber-400 text-slate-950 text-xs font-black"
             >
-              <ShieldCheck className="w-4 h-4 text-amber-300" aria-hidden="true" />
+              <FileText className="w-4 h-4" />
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-navigation"
+              className="p-2 rounded-xl text-slate-300 hover:bg-slate-900"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" aria-hidden="true" /> : <Menu className="w-6 h-6" aria-hidden="true" />}
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
+
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile Navigation Menu"
-          className="fixed inset-0 z-50 lg:hidden flex flex-col bg-slate-950/60 backdrop-blur-sm"
-        >
-          <div className="ml-auto w-full max-w-xs sm:max-w-sm h-full bg-white shadow-2xl flex flex-col p-6 overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <Logo variant="default" showSubtitle={true} />
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                aria-label="Close Mobile Navigation"
-              >
-                <X className="w-6 h-6" aria-hidden="true" />
+        <div className="fixed inset-0 z-50 lg:hidden flex flex-col bg-slate-950/80 backdrop-blur-md">
+          <div className="ml-auto w-full max-w-xs h-full bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col p-6 overflow-y-auto space-y-6 text-white">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-2">
+                <img src={logoImg} alt="Logo" className="w-8 h-8 rounded-lg object-contain border border-amber-400/40" />
+                <span className="font-heading font-black text-sm text-white">Kadadi Motors</span>
+              </div>
+              <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400">
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <nav className="py-4 space-y-1 flex-1" aria-label="Mobile Navigation Links">
+            <nav className="space-y-1.5 flex-1">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-colors flex items-center justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
-                      isActive
-                        ? 'bg-blue-50 text-blue-800 font-bold'
-                        : 'text-slate-700 hover:bg-slate-50'
+                    className={`w-full text-left px-4 py-3 rounded-xl text-xs font-extrabold flex items-center justify-between ${
+                      isActive ? 'bg-amber-400 text-slate-950 font-black' : 'text-slate-300 hover:bg-slate-900'
                     }`}
                   >
-                    <span>{item.label}</span>
-                    {isActive && <span className="w-2 h-2 rounded-full bg-blue-600" aria-hidden="true" />}
+                    <div className="flex items-center gap-2">
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </div>
                   </button>
                 );
               })}
             </nav>
 
-            <div className="pt-4 border-t border-slate-100 space-y-3">
+            <div className="pt-4 border-t border-slate-900 space-y-2">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   onOpenQuoteModal();
                 }}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-700 text-white font-bold text-sm shadow hover:bg-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="w-full py-3 rounded-xl bg-amber-400 text-slate-950 font-black text-xs"
               >
-                <ShieldCheck className="w-4 h-4 text-amber-300" aria-hidden="true" />
-                <span>Request Free Policy Advice</span>
+                Request Free Policy Advice
               </button>
-
-              <a
-                href={BUSINESS_INFO.googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 text-slate-800 font-semibold text-xs border border-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                aria-label="Get Directions to Bidar Office on Google Maps"
-              >
-                <MapPin className="w-4 h-4 text-blue-600" aria-hidden="true" />
-                <span>Get Directions (Bidar Office)</span>
-              </a>
-
-              <div className="p-3 rounded-xl bg-slate-50 text-xs text-slate-600 space-y-1">
-                <p className="font-semibold text-slate-900">{BUSINESS_INFO.name}</p>
-                <p>Founder: {BUSINESS_INFO.founder}</p>
-                <p className="text-slate-500">Udgir Road, Beside MAX, Bidar</p>
-                <p className="text-blue-700 font-medium">Ph: {BUSINESS_INFO.phoneDisplay}</p>
-              </div>
             </div>
           </div>
         </div>
       )}
+
     </header>
   );
 };
-
