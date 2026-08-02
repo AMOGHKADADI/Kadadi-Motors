@@ -93,8 +93,8 @@ export const HomeQuickDirectory: React.FC<HomeQuickDirectoryProps> = ({
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-500/30 text-amber-300 text-xs font-black uppercase tracking-widest">
-            <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
-            <span>Dedicated Multi-Page Portals</span>
+            <ShieldCheck className="w-4 h-4 text-amber-400" aria-hidden="true" />
+            <span>Dedicated Service Portals</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-tight">

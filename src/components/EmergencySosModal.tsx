@@ -55,7 +55,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({ isOpen, on
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-rose-950 via-slate-950 to-slate-950 border-b border-rose-900/50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 animate-pulse">
+            <div className="p-2.5 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400">
               <ShieldAlert className="w-7 h-7" />
             </div>
             <div>

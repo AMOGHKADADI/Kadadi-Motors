@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FAQ_ITEMS, BUSINESS_INFO } from '../data/insuranceData';
-import { HelpCircle, ChevronDown, MessageSquare, ShieldCheck, Search } from 'lucide-react';
+import { HelpCircle, ChevronDown, MessageSquare, ShieldCheck, Search, Sparkles, HelpCircle as QuestionIcon, Clock, PhoneCall } from 'lucide-react';
 
 interface FaqSectionProps {
   onOpenQuoteModal?: (preselectedCategory?: string) => void;
@@ -38,47 +38,53 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenQuoteModal }) => {
   };
 
   return (
-    <section id="faq" className="py-16 lg:py-24 bg-white border-b border-slate-200">
+    <section id="faq" className="py-20 sm:py-32 bg-black text-white relative overflow-hidden border-b border-white/10">
       
-      {/* Inject JSON-LD Structured Data for Search Engine FAQ Rich Snippets */}
+      {/* Background Ambient Glows */}
+      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
         
-        {/* Section Header */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-blue-800 bg-blue-100/80 border border-blue-200 uppercase tracking-wider">
-            <HelpCircle className="w-3.5 h-3.5 text-blue-700" />
-            <span>Structured Guidance & FAQs</span>
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
-            Frequently Asked Questions About Our Advisory Services
+        {/* Module Header */}
+        <div className="text-center space-y-5 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-red-400 bg-red-950/60 border border-red-500/30 backdrop-blur-xl shadow-lg">
+            <QuestionIcon className="w-3.5 h-3.5 text-red-400" />
+            <span>Insurance Knowledge Desk • Bidar</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-white tracking-tight leading-none">
+            Frequently Asked Questions
           </h2>
-          <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
-            Clear answers regarding local policy comparisons, offline claim support in Bidar, and why independent advisory protects you better than automated web portals.
+
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+            Transparent guidance regarding No Claim Bonus (NCB) transfers, room rent capping, cashless garage networks, and offline claim assistance in Bidar.
           </p>
         </div>
 
-        {/* Controls: Search and Categories */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+        {/* Search & Category Filter Bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/5 backdrop-blur-2xl p-5 rounded-3xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] shadow-2xl">
           
           {/* Search Box */}
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full md:w-80">
+            <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Filter FAQs..."
+              placeholder="Search insurance questions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full pl-11 pr-4 py-3 text-xs sm:text-sm bg-black/80 text-white placeholder-slate-500 border border-white/20 rounded-2xl focus:outline-none focus:border-blue-400 transition-all font-mono"
             />
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
             {[
               { id: 'all', label: 'All Questions' },
               { id: 'general', label: 'General & Office' },
@@ -89,10 +95,10 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenQuoteModal }) => {
               <button
                 key={cat.id}
                 onClick={() => setFaqCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-2xl text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
                   faqCategory === cat.id
-                    ? 'bg-blue-700 text-white'
-                    : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
+                    ? 'bg-white text-black shadow-lg font-black scale-105'
+                    : 'bg-black/60 text-slate-300 hover:text-white border border-white/10 hover:bg-white/10'
                 }`}
               >
                 {cat.label}
@@ -102,35 +108,35 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenQuoteModal }) => {
 
         </div>
 
-        {/* FAQ Accordion List */}
-        <div className="mt-8 space-y-4">
-          {filteredFaqs.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-sm">
-              No matching questions found for "{searchTerm}".
-            </div>
-          ) : (
-            filteredFaqs.map((faq, idx) => {
+        {/* Balanced 2-Column FAQ Grid Layout */}
+        {filteredFaqs.length === 0 ? (
+          <div className="p-12 text-center text-slate-400 bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 text-sm">
+            No matching insurance questions found for "{searchTerm}".
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-2 gap-6 items-start">
+            {filteredFaqs.map((faq, idx) => {
               const isOpen = openIndex === idx;
               return (
                 <div
                   key={idx}
-                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                  className={`rounded-3xl border transition-all duration-300 overflow-hidden backdrop-blur-2xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] shadow-xl ${
                     isOpen
-                      ? 'bg-blue-50/40 border-blue-300 shadow-sm'
-                      : 'bg-white border-slate-200 hover:border-slate-300'
+                      ? 'bg-white/10 border-blue-500/50 shadow-blue-500/10'
+                      : 'bg-white/5 border-white/10 hover:border-white/25'
                   }`}
                 >
                   <button
                     onClick={() => toggleAccordion(idx)}
-                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                    className="w-full p-6 sm:p-7 text-left flex items-start justify-between gap-4 focus:outline-none cursor-pointer"
                     aria-expanded={isOpen}
                   >
-                    <span className="font-heading font-bold text-slate-900 text-base sm:text-lg pr-2 leading-snug">
+                    <span className="font-heading font-black text-white text-base sm:text-lg pr-2 leading-snug">
                       {faq.question}
                     </span>
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 ${
-                        isOpen ? 'bg-blue-700 text-white rotate-180' : 'bg-slate-100 text-slate-600'
+                      className={`w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+                        isOpen ? 'bg-blue-600 text-white rotate-180 shadow-lg shadow-blue-600/30' : 'bg-white/10 text-slate-300 border border-white/10'
                       }`}
                     >
                       <ChevronDown className="w-5 h-5" />
@@ -138,49 +144,55 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenQuoteModal }) => {
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 pb-6 sm:px-6 sm:pb-6 pt-0 text-slate-700 text-sm sm:text-base leading-relaxed border-t border-blue-100/60 mt-1">
-                      <p className="pt-3">{faq.answer}</p>
+                    <div className="px-6 pb-7 sm:px-7 sm:pb-7 pt-0 text-slate-300 text-xs sm:text-sm leading-relaxed border-t border-white/10 mt-1 animate-fadeIn">
+                      <p className="pt-4 text-slate-200 font-normal">{faq.answer}</p>
 
-                      <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500">
-                        <span className="flex items-center gap-1 font-semibold text-blue-800">
-                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                          Verified Kadadi Motors Advisory Policy
+                      <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400 font-mono">
+                        <span className="flex items-center gap-1.5 font-bold text-blue-400">
+                          <ShieldCheck className="w-4 h-4 text-blue-400" />
+                          <span>Verified Advisory Guidance</span>
                         </span>
-                        <span>Bidar, Karnataka</span>
+                        <span className="text-slate-400">Bidar Desk • Udgir Road</span>
                       </div>
                     </div>
                   )}
                 </div>
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        )}
 
-        {/* CTA Footer inside FAQ */}
-        <div className="mt-12 p-6 sm:p-8 rounded-3xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-          <div className="space-y-1 text-center sm:text-left">
-            <h3 className="text-xl font-heading font-bold">Have a Specific Question About Your Current Policy?</h3>
-            <p className="text-xs sm:text-sm text-slate-400">
-              Speak directly with Chandrakant Kadadi or visit our Udgir Road office in Bidar.
+        {/* CTA Glassmorphic Banner */}
+        <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-blue-950/60 via-black to-red-950/60 border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] backdrop-blur-2xl text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
+          <div className="space-y-2 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-mono font-bold text-blue-400">
+              <Clock className="w-4 h-4 text-blue-400" />
+              <span>Direct Advisor Response • Mon - Sat (9 AM - 8 PM)</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
+              Have a Specific Policy Question?
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
+              Consult directly with Chandrakant Kadadi or visit our physical office at Udgir Road beside MAX in Bidar.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
             {onOpenQuoteModal && (
               <button
                 onClick={() => onOpenQuoteModal()}
-                className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md transition-all"
+                className="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-xl shadow-blue-600/30 transition-all cursor-pointer"
               >
-                Request Advice
+                Request Free Advice
               </button>
             )}
             <a
-              href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Kadadi%20Motors,%20I%20have%20a%20question%20about%20my%20insurance.`}
+              href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Chandrakant%20Kadadi%20Sir,%20I%20have%20a%20question%20about%20my%20insurance.`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all flex items-center gap-1.5"
+              className="px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer backdrop-blur-md"
             >
-              <MessageSquare className="w-4 h-4" />
+              <MessageSquare className="w-4 h-4 text-red-400" />
               <span>WhatsApp Us</span>
             </a>
           </div>
@@ -190,3 +202,4 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenQuoteModal }) => {
     </section>
   );
 };
+

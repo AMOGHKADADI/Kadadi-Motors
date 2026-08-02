@@ -123,7 +123,7 @@ export const SectorDetailsView: React.FC<SectorDetailsViewProps> = ({
                   onClick={() => onOpenQuoteModal(sol.category)}
                   className="w-full py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs transition-all flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-slate-950" aria-hidden="true" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-950" aria-hidden="true" />
                   <span>Request Advice & Quote</span>
                 </button>
               </div>

@@ -16,7 +16,7 @@ export const Logo: React.FC<LogoProps> = ({
   
   if (variant === 'full-badge') {
     return (
-      <div className={`flex flex-col items-center text-center p-4 bg-gradient-to-b from-slate-900 via-slate-950 to-blue-950 rounded-2xl border border-amber-500/30 shadow-xl ${className}`}>
+      <div className={`flex flex-col items-center text-center p-4 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl ${className}`}>
         <img
           src={logoImg}
           alt="Kadadi Motors Official Logo Badge"
@@ -26,17 +26,17 @@ export const Logo: React.FC<LogoProps> = ({
         <h2 className="font-heading font-black text-xl sm:text-2xl text-white tracking-wider">
           KADADI MOTORS
         </h2>
-        <p className="text-[10px] sm:text-xs font-bold text-amber-400 tracking-widest uppercase mt-0.5">
+        <p className="text-[10px] sm:text-xs font-bold text-blue-400 tracking-widest uppercase mt-0.5">
           Trusted Today, Secure Tomorrow
         </p>
         <p className="text-[10px] text-slate-300 font-medium mt-1">
           CHANDRAKANT KADADI • BIDAR
         </p>
-        <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/60 text-[10px] font-bold text-slate-200">
+        <div className="flex items-center gap-2 mt-2 px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-[10px] font-bold text-slate-200">
           <span>TRUST</span>
-          <span className="text-amber-400">•</span>
+          <span className="text-blue-400">•</span>
           <span>SERVICE</span>
-          <span className="text-amber-400">•</span>
+          <span className="text-blue-400">•</span>
           <span>COMMITMENT</span>
         </div>
       </div>
@@ -63,7 +63,7 @@ export const Logo: React.FC<LogoProps> = ({
         <img
           src={logoImg}
           alt="Kadadi Motors Emblem"
-          className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl drop-shadow-md border border-amber-500/20 transition-transform duration-300 hover:scale-105"
+          className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl border border-slate-800"
           referrerPolicy="no-referrer"
         />
       </div>
@@ -80,7 +80,7 @@ export const Logo: React.FC<LogoProps> = ({
           </span>
           <span
             className={`font-heading font-bold text-lg sm:text-xl tracking-tight leading-none ${
-              isLight ? 'text-amber-400' : 'text-blue-700'
+              isLight ? 'text-blue-400' : 'text-blue-600'
             }`}
           >
             MOTORS
@@ -90,7 +90,7 @@ export const Logo: React.FC<LogoProps> = ({
         {showSubtitle && (
           <span
             className={`text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase mt-0.5 ${
-              isLight ? 'text-slate-300' : 'text-slate-500'
+              isLight ? 'text-slate-400' : 'text-slate-500'
             }`}
           >
             Insurance Advisory • Est. 1999

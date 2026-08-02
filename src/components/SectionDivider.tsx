@@ -17,7 +17,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
   const renderIcon = () => {
     switch (icon) {
       case 'sparkles':
-        return <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />;
+        return <Shield className="w-4 h-4 text-amber-400" aria-hidden="true" />;
       case 'award':
         return <Award className="w-4 h-4 text-emerald-400" aria-hidden="true" />;
       case 'star':
@@ -39,7 +39,7 @@ export const SectionDivider: React.FC<SectionDividerProps> = ({
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300 font-extrabold shadow-xl backdrop-blur-md">
           {renderIcon()}
           <span className="tracking-wider uppercase text-[10px] font-black text-slate-300">{label}</span>
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
         </div>
       </div>
     </div>

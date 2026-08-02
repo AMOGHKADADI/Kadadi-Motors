@@ -813,7 +813,6 @@ export const AdminPortal: React.FC = () => {
                 {/* Real-Time Live Status Indicator Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 text-[10px] font-bold shadow-inner">
                   <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
                   <span>Live Firestore Sync: Active</span>
@@ -857,7 +856,7 @@ export const AdminPortal: React.FC = () => {
               <Mail className="w-4 h-4 text-amber-400" aria-hidden="true" />
               <span className="hidden sm:inline text-xs font-extrabold">Email Service</span>
               {emailNotifications.filter((n) => !n.read).length > 0 && (
-                <span className="flex h-5 px-1.5 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[10px] font-black shadow-lg animate-pulse">
+                <span className="flex h-5 px-1.5 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[10px] font-black shadow-lg">
                   {emailNotifications.filter((n) => !n.read).length}
                 </span>
               )}
@@ -871,7 +870,7 @@ export const AdminPortal: React.FC = () => {
             >
               <Bell className="w-5 h-5 text-amber-400" aria-hidden="true" />
               {toasts.filter((t) => t.unread).length > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow-lg animate-pulse">
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow-lg">
                   {toasts.filter((t) => t.unread).length}
                 </span>
               )}
@@ -1378,7 +1377,7 @@ export const AdminPortal: React.FC = () => {
                     <tr>
                       <td colSpan={9} className="py-12 text-center text-slate-400">
                         <div className="flex flex-col items-center justify-center space-y-2">
-                          <Clock className="w-8 h-8 text-slate-600 animate-bounce" aria-hidden="true" />
+                          <Clock className="w-8 h-8 text-slate-600" aria-hidden="true" />
                           <span className="font-bold text-sm text-slate-300">No customer inquiries found in this view.</span>
                           <p className="text-xs text-slate-500 max-w-sm">
                             Try clearing your search filters or switching tabs to view registered user leads.

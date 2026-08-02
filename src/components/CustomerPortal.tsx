@@ -725,7 +725,6 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({
                   </span>
                   {activitiesList.some((a) => a.isNew) && (
                     <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </span>
                   )}
@@ -1098,7 +1097,7 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({
                 className="space-y-2"
               >
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-black">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>Security Verification Successful</span>
                 </div>
 

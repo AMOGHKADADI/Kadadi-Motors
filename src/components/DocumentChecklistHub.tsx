@@ -18,6 +18,7 @@ import {
   Square,
   Car,
   Truck,
+  FileCheck,
   HeartPulse,
   ShieldAlert,
   Building,
@@ -168,8 +169,8 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
         {/* Section Title Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-200 text-xs font-black uppercase tracking-widest">
-            <Sparkles className="w-4 h-4 text-orange-300" aria-hidden="true" />
-            <span>Interactive Document Checklist Helper Tool</span>
+            <FileCheck className="w-4 h-4 text-orange-300" aria-hidden="true" />
+            <span>Document Checklist Guide</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-tight">

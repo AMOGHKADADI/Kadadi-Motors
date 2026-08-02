@@ -52,54 +52,59 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
   const motorRec = getMotorRecommendation();
 
   return (
-    <section className="py-16 lg:py-20 bg-slate-50 border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="py-16 lg:py-24 bg-black text-white relative overflow-hidden border-b border-white/10">
+      
+      {/* Background Subtle Red & Blue Orbs */}
+      <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-10 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-bold text-blue-800 bg-blue-100 border border-blue-200 uppercase tracking-wider">
-            Interactive Coverage Guidance
+          <span className="inline-block px-3.5 py-1 rounded-full text-xs font-black text-blue-400 bg-blue-950/60 border border-blue-500/30 uppercase tracking-wider backdrop-blur-md">
+            Interactive Policy Calculator
           </span>
-          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-tight leading-tight">
             Estimate Your Family & Vehicle Coverage Needs
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
             Use our independent advisory tool to estimate sum insured and essential policy add-ons before requesting multi-insurer quotes.
           </p>
         </div>
 
-        <div className="mt-12 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl max-w-4xl mx-auto">
+        <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 sm:p-10 border border-white/10 shadow-2xl max-w-4xl mx-auto">
           
           {/* Category Tabs */}
-          <div className="flex items-center justify-center gap-2 border-b border-slate-100 pb-6 mb-8 overflow-x-auto">
+          <div className="flex items-center justify-center gap-2 border-b border-white/10 pb-6 mb-8 overflow-x-auto">
             <button
               onClick={() => setCalcCategory('health')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 calcCategory === 'health'
-                  ? 'bg-blue-700 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-white text-black shadow-lg font-black'
+                  : 'bg-white/5 text-slate-300 hover:text-white border border-white/10 hover:bg-white/10'
               }`}
             >
               Health Coverage
             </button>
             <button
               onClick={() => setCalcCategory('motor')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 calcCategory === 'motor'
-                  ? 'bg-blue-700 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-white text-black shadow-lg font-black'
+                  : 'bg-white/5 text-slate-300 hover:text-white border border-white/10 hover:bg-white/10'
               }`}
             >
               Car & Bike Motor
             </button>
             <button
               onClick={() => setCalcCategory('commercial')}
-              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 calcCategory === 'commercial'
-                  ? 'bg-blue-700 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-white text-black shadow-lg font-black'
+                  : 'bg-white/5 text-slate-300 hover:text-white border border-white/10 hover:bg-white/10'
               }`}
             >
-              Commercial / Truck
+              Commercial / Fleet
             </button>
           </div>
 
@@ -109,7 +114,7 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
               <div className="md:col-span-6 space-y-5 text-left">
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">
+                  <label className="block text-xs font-bold text-slate-300 mb-2">
                     Number of Family Members to Cover: {familyMembers}
                   </label>
                   <input
@@ -118,31 +123,31 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
                     max="6"
                     value={familyMembers}
                     onChange={(e) => setFamilyMembers(parseInt(e.target.value))}
-                    className="w-full accent-blue-700"
+                    className="w-full accent-blue-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
                   />
-                  <div className="flex justify-between text-[10px] text-slate-500 font-medium mt-1">
+                  <div className="flex justify-between text-[10px] text-slate-400 font-medium mt-1">
                     <span>1 Person</span>
                     <span>3 Members</span>
                     <span>6+ Family</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="text-xs font-semibold text-slate-800">Include Senior Citizen Parents?</span>
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
+                  <span className="text-xs font-semibold text-slate-300">Include Senior Citizen Parents?</span>
                   <input
                     type="checkbox"
                     checked={seniorCitizen}
                     onChange={(e) => setSeniorCitizen(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 rounded bg-slate-900 border-slate-700 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700">Primary Hospital Location Zone</label>
+                  <label className="block text-xs font-bold text-slate-300">Primary Hospital Location Zone</label>
                   <select
                     value={cityTier}
                     onChange={(e) => setCityTier(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-200 text-xs font-medium focus:outline-none focus:border-blue-500"
                   >
                     <option value="tier2">Bidar & Surrounding Districts (Tier 2/3)</option>
                     <option value="tier1">Metros e.g. Bengaluru / Hyderabad (Tier 1)</option>
@@ -151,20 +156,20 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
 
               </div>
 
-              <div className="md:col-span-6 bg-slate-900 text-white rounded-2xl p-6 space-y-4 shadow-lg text-left">
+              <div className="md:col-span-6 bg-slate-950 text-white rounded-2xl p-6 space-y-4 border border-slate-800 text-left">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs text-amber-400 font-bold uppercase tracking-wider">Recommended Sum Insured</span>
-                  <Calculator className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Recommended Sum Insured</span>
+                  <Calculator className="w-4 h-4 text-blue-400" />
                 </div>
 
                 <div>
-                  <div className="text-3xl font-heading font-extrabold text-amber-400">{healthRec.sumInsured}</div>
-                  <div className="text-xs text-slate-300 mt-1">Family Floater Coverage</div>
+                  <div className="text-3xl font-heading font-extrabold text-white">{healthRec.sumInsured}</div>
+                  <div className="text-xs text-slate-400 mt-1">Family Floater Coverage</div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800 text-xs space-y-1">
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-1">
                   <span className="text-slate-400 block font-medium">Estimated Premium Range:</span>
-                  <span className="text-emerald-400 font-bold text-sm">{healthRec.estimatedAnnualRange} / year</span>
+                  <span className="text-blue-400 font-bold text-sm">{healthRec.estimatedAnnualRange} / year</span>
                   <span className="text-[10px] text-slate-400 block">Subject to insurer NCB & medical underwriting.</span>
                 </div>
 
@@ -180,7 +185,7 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
 
                 <button
                   onClick={() => onOpenQuoteModal('Health Insurance')}
-                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md mt-4 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-xs mt-4 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   <span>Compare Health Insurers Now</span>
                   <ArrowRight className="w-4 h-4" />
@@ -194,11 +199,11 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
             <div className="grid md:grid-cols-12 gap-8 items-center text-left">
               <div className="md:col-span-6 space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Vehicle Age</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-2">Vehicle Age</label>
                   <select
                     value={vehicleAge}
                     onChange={(e) => setVehicleAge(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-200 text-xs font-medium focus:outline-none focus:border-blue-500"
                   >
                     <option value="new">Brand New Vehicle (0-1 Year)</option>
                     <option value="1to3">1 to 3 Years Old</option>
@@ -207,24 +212,24 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
                   </select>
                 </div>
 
-                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/60 border border-slate-800">
                   <div>
-                    <span className="text-xs font-bold text-slate-900 block">Have Existing No Claim Bonus (NCB)?</span>
-                    <span className="text-[11px] text-slate-500">Transfers up to 50% discount from old insurer</span>
+                    <span className="text-xs font-bold text-slate-200 block">Have Existing No Claim Bonus (NCB)?</span>
+                    <span className="text-[11px] text-slate-400">Transfers up to 50% discount from old insurer</span>
                   </div>
                   <input
                     type="checkbox"
                     checked={hasNCB}
                     onChange={(e) => setHasNCB(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 rounded bg-slate-900 border-slate-700 focus:ring-blue-500"
                   />
                 </div>
               </div>
 
-              <div className="md:col-span-6 bg-slate-900 text-white rounded-2xl p-6 space-y-4 shadow-lg">
+              <div className="md:col-span-6 bg-slate-950 text-white rounded-2xl p-6 space-y-4 border border-slate-800">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs text-amber-400 font-bold uppercase tracking-wider">Motor Policy Recommendation</span>
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Motor Policy Recommendation</span>
+                  <ShieldCheck className="w-4 h-4 text-blue-400" />
                 </div>
 
                 <div className="text-xl font-heading font-bold text-white">{motorRec.recommendation}</div>
@@ -234,7 +239,7 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
                   <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wide">Recommended Add-on Covers:</span>
                   {motorRec.keyAddons.map((item, i) => (
                     <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                       <span>{item}</span>
                     </div>
                   ))}
@@ -242,7 +247,7 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
 
                 <button
                   onClick={() => onOpenQuoteModal('Car Insurance')}
-                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md mt-4 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-xs mt-4 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   <span>Get Instant Motor Quotes</span>
                   <ArrowRight className="w-4 h-4" />
@@ -256,26 +261,26 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
             <div className="grid md:grid-cols-12 gap-8 items-center text-left">
               <div className="md:col-span-6 space-y-5">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">Commercial Fleet Type</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-2">Commercial Fleet Type</label>
                   <select
                     value={commercialType}
                     onChange={(e) => setCommercialType(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs font-medium"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-200 text-xs font-medium focus:outline-none focus:border-blue-500"
                   >
                     <option value="goods">Goods Transport (Trucks, Pickups, Tippers)</option>
                     <option value="passenger">Passenger Transport (Taxis, Buses, Shuttles)</option>
                     <option value="fleet">Multi-Vehicle Fleet (5+ Vehicles)</option>
                   </select>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs text-slate-400 leading-relaxed">
                   Commercial vehicle policies require precise IDV valuation, third-party liability endorsements, and paid-driver accident protection to pass transport authority audits.
                 </p>
               </div>
 
-              <div className="md:col-span-6 bg-slate-900 text-white rounded-2xl p-6 space-y-4 shadow-lg">
+              <div className="md:col-span-6 bg-slate-950 text-white rounded-2xl p-6 space-y-4 border border-slate-800">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <span className="text-xs text-amber-400 font-bold uppercase tracking-wider">Commercial Risk Advisory</span>
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Commercial Risk Advisory</span>
+                  <ShieldCheck className="w-4 h-4 text-blue-400" />
                 </div>
 
                 <p className="text-xs text-slate-300 leading-relaxed">
@@ -284,7 +289,7 @@ export const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ onOpenQuot
 
                 <button
                   onClick={() => onOpenQuoteModal('Commercial Vehicle Insurance')}
-                  className="w-full py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs shadow-md mt-4 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-xs mt-4 flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   <span>Request Commercial Fleet Quote</span>
                   <ArrowRight className="w-4 h-4" />

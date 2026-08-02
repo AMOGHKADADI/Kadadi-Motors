@@ -112,7 +112,7 @@ export const AutomatedEmailNotificationModal: React.FC<AutomatedEmailNotificatio
             <div>
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                   Active Automated Email Service
                 </span>
                 <span className="text-xs text-slate-400 hidden sm:inline">• Destination: <strong className="text-amber-300 font-mono">chandrakant.kadadi@kadadimotors.com</strong></span>
@@ -224,7 +224,7 @@ export const AutomatedEmailNotificationModal: React.FC<AutomatedEmailNotificatio
                       }`}
                     >
                       {!mail.read && (
-                        <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                        <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-amber-400"></span>
                       )}
 
                       <div className="flex items-center justify-between pr-4">
