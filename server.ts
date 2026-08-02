@@ -12,6 +12,23 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Security headers middleware
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    next();
+  });
+
+  // Health check endpoint for container monitoring
+  app.get("/api/health", (req, res) => {
+    res.json({
+      status: "ok",
+      service: "kadadi-motors",
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // Initialize Server-side Gemini AI client
   const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
