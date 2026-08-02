@@ -3,8 +3,12 @@ export interface CustomerProfile {
   id: string;
   fullName: string;
   phone: string;
+  email?: string;
   vehicleOrPolicyNo?: string;
   city: string;
+  pincode?: string;
+  preferredCategory?: string;
+  isVerified?: boolean;
   kmPoints: number;
   tier: 'Bronze' | 'Silver Executive' | 'Gold Partner' | 'Platinum Patron';
   createdAt: string;
@@ -59,14 +63,92 @@ export interface AdminEmailNotification {
   read: boolean;
 }
 
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  subscribedAt: string;
+  preference?: string;
+  status: 'Active' | 'Unsubscribed';
+}
+
 // Key Constants
 const STORAGE_KEYS = {
   CURRENT_USER: 'km_current_user_v2',
   INQUIRIES: 'km_inquiries_v2',
   ADMIN_AUTH: 'km_admin_auth_v2',
   KM_POINTS: 'km_points_v2',
-  ADMIN_NOTIFICATIONS: 'km_admin_notifications_v2'
+  ADMIN_NOTIFICATIONS: 'km_admin_notifications_v2',
+  NEWSLETTER_SUBSCRIBERS: 'km_newsletter_subscribers_v2',
+  REGISTERED_USERS: 'km_registered_users_v2'
 };
+
+const INITIAL_REGISTERED_USERS: CustomerProfile[] = [
+  {
+    id: 'CUST-88102',
+    fullName: 'Veeresh Patil',
+    phone: '98451 22345',
+    city: 'Bidar (Udgir Road)',
+    kmPoints: 450,
+    tier: 'Silver Executive',
+    createdAt: '2026-05-10T10:00:00.000Z',
+    uploadedDocsCount: 2,
+    referralsCount: 2,
+    vehicleOrPolicyNo: 'KA-38-M-4512'
+  },
+  {
+    id: 'CUST-88105',
+    fullName: 'Anand Kumar Biradar',
+    phone: '99023 88120',
+    city: 'Bhalki, Bidar',
+    kmPoints: 600,
+    tier: 'Gold Partner',
+    createdAt: '2026-05-18T14:30:00.000Z',
+    uploadedDocsCount: 1,
+    referralsCount: 3,
+    vehicleOrPolicyNo: 'STAR-HEALTH-99210'
+  },
+  {
+    id: 'CUST-88109',
+    fullName: 'Rajeshwar Swamy',
+    phone: '97312 44510',
+    city: 'Humnabad, Bidar',
+    kmPoints: 850,
+    tier: 'Platinum Patron',
+    createdAt: '2026-04-02T09:15:00.000Z',
+    uploadedDocsCount: 3,
+    referralsCount: 4,
+    vehicleOrPolicyNo: 'BAJAJ-ALL-FIRE-882104'
+  },
+  {
+    id: 'CUST-88114',
+    fullName: 'Santosh Deshmukh',
+    phone: '94481 99321',
+    city: 'Bidar (Beside MAX)',
+    kmPoints: 200,
+    tier: 'Bronze',
+    createdAt: '2026-06-01T11:20:00.000Z',
+    uploadedDocsCount: 1,
+    referralsCount: 0,
+    vehicleOrPolicyNo: 'KA-38-P-9011'
+  }
+];
+
+const INITIAL_SUBSCRIBERS: NewsletterSubscriber[] = [
+  {
+    id: 'SUB-101',
+    email: 'veeresh.patil@bidar.org',
+    subscribedAt: '15 Jul 2026, 10:30 AM',
+    preference: 'Commercial Transport & Motor Tariff',
+    status: 'Active'
+  },
+  {
+    id: 'SUB-102',
+    email: 'anand.biradar@gmail.com',
+    subscribedAt: '22 Jul 2026, 04:15 PM',
+    preference: 'Health & Family Regulatory Updates',
+    status: 'Active'
+  }
+];
 
 const INITIAL_NOTIFICATIONS: AdminEmailNotification[] = [
   {
@@ -77,7 +159,7 @@ const INITIAL_NOTIFICATIONS: AdminEmailNotification[] = [
     city: 'Bidar (Udgir Road)',
     categoryTitle: 'Commercial & Goods Vehicle',
     fileName: 'RC_Book_KA38_M4512.pdf',
-    sentToEmail: 'chandu.kadadi@kadadimotors.com',
+    sentToEmail: 'chandrakant.kadadi@kadadimotors.com',
     sentAt: 'Today, 10:30 AM',
     status: 'Delivered & Alerted',
     emailSubject: '🚨 [DOC UPLOAD ALERT] Veeresh Patil uploaded "RC_Book_KA38_M4512.pdf" for Inquiry INQ-9801',
@@ -92,7 +174,7 @@ const INITIAL_NOTIFICATIONS: AdminEmailNotification[] = [
     city: 'Bhalki, Bidar',
     categoryTitle: 'Health & Family Insurance',
     fileName: 'Family_Aadhaar_Set.pdf',
-    sentToEmail: 'chandu.kadadi@kadadimotors.com',
+    sentToEmail: 'chandrakant.kadadi@kadadimotors.com',
     sentAt: 'Yesterday, 04:15 PM',
     status: 'Delivered & Alerted',
     emailSubject: '🚨 [DOC UPLOAD ALERT] Anand Kumar Biradar uploaded "Family_Aadhaar_Set.pdf" for Inquiry INQ-9784',
@@ -276,6 +358,23 @@ export class AppStore {
     return newInquiry;
   }
 
+  // Delete inquiry (Spam removal)
+  static deleteInquiry(id: string): void {
+    const inquiries = this.getInquiries();
+    const updated = inquiries.filter((i) => i.id !== id);
+    localStorage.setItem(STORAGE_KEYS.INQUIRIES, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('km_store_updated'));
+  }
+
+  // Bulk delete inquiries (Spam purge)
+  static deleteInquiriesBulk(ids: string[]): void {
+    if (!ids || ids.length === 0) return;
+    const inquiries = this.getInquiries();
+    const updated = inquiries.filter((i) => !ids.includes(i.id));
+    localStorage.setItem(STORAGE_KEYS.INQUIRIES, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('km_store_updated'));
+  }
+
   // Update inquiry status by Admin (Chandu Kadadi)
   static updateInquiryStatus(
     id: string,
@@ -350,7 +449,7 @@ export class AppStore {
       city: data.city || 'Bidar',
       categoryTitle: data.categoryTitle,
       fileName: data.fileName,
-      sentToEmail: 'chandu.kadadi@kadadimotors.com',
+      sentToEmail: 'chandrakant.kadadi@kadadimotors.com',
       sentAt: timestamp,
       status: 'Delivered & Alerted',
       emailSubject: `🚨 [DOC UPLOAD ALERT] ${data.customerName} uploaded "${data.fileName}" for Inquiry ${data.inquiryId}`,
@@ -415,6 +514,34 @@ export class AppStore {
   }
 
   // User Profile Management
+  static getRegisteredUsers(): CustomerProfile[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
+      let users: CustomerProfile[] = data ? JSON.parse(data) : INITIAL_REGISTERED_USERS;
+      if (!data) {
+        localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(INITIAL_REGISTERED_USERS));
+      }
+      
+      // Ensure current logged-in user is included
+      const current = this.getCurrentUser();
+      if (current && !users.some((u) => u.phone.replace(/\D/g, '') === current.phone.replace(/\D/g, ''))) {
+        users = [current, ...users];
+        localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(users));
+      }
+      return users;
+    } catch {
+      return INITIAL_REGISTERED_USERS;
+    }
+  }
+
+  static isPhoneRegistered(phone: string): boolean {
+    if (!phone) return false;
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length < 5) return false;
+    const users = this.getRegisteredUsers();
+    return users.some((u) => u.phone.replace(/\D/g, '').includes(cleanPhone) || cleanPhone.includes(u.phone.replace(/\D/g, '')));
+  }
+
   static getCurrentUser(): CustomerProfile | null {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
@@ -422,6 +549,76 @@ export class AppStore {
     } catch {
       return null;
     }
+  }
+
+  static loginWithPhone(phone: string): CustomerProfile | null {
+    const users = this.getRegisteredUsers();
+    const cleanPhone = phone.replace(/\D/g, '');
+    const found = users.find((u) => u.phone.replace(/\D/g, '').includes(cleanPhone) || cleanPhone.includes(u.phone.replace(/\D/g, '')));
+    if (found) {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(found));
+      window.dispatchEvent(new CustomEvent('km_store_updated'));
+      return found;
+    }
+    return null;
+  }
+
+  static registerNewClient(details: {
+    fullName: string;
+    phone: string;
+    email?: string;
+    city: string;
+    pincode?: string;
+    vehicleOrPolicyNo?: string;
+    preferredCategory?: string;
+  }): CustomerProfile {
+    const users = this.getRegisteredUsers();
+    const cleanPhone = details.phone.replace(/\D/g, '');
+
+    // Check if user already exists
+    const existing = users.find((u) => u.phone.replace(/\D/g, '') === cleanPhone);
+    if (existing) {
+      // Update existing record
+      const updatedUser: CustomerProfile = {
+        ...existing,
+        fullName: details.fullName || existing.fullName,
+        email: details.email || existing.email,
+        city: details.city || existing.city,
+        pincode: details.pincode || existing.pincode,
+        vehicleOrPolicyNo: details.vehicleOrPolicyNo || existing.vehicleOrPolicyNo,
+        preferredCategory: details.preferredCategory || existing.preferredCategory,
+        isVerified: true
+      };
+
+      const updatedUsersList = users.map((u) => (u.id === existing.id ? updatedUser : u));
+      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(updatedUsersList));
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(updatedUser));
+      window.dispatchEvent(new CustomEvent('km_store_updated'));
+      return updatedUser;
+    }
+
+    // New Verified Genuine Client
+    const newUser: CustomerProfile = {
+      id: `CUST-${Math.floor(10000 + Math.random() * 90000)}`,
+      fullName: details.fullName,
+      phone: details.phone,
+      email: details.email,
+      city: details.city || 'Bidar',
+      pincode: details.pincode,
+      vehicleOrPolicyNo: details.vehicleOrPolicyNo,
+      preferredCategory: details.preferredCategory || 'Motor Commercial / Private Car',
+      isVerified: true,
+      kmPoints: 150, // Welcome Bonus for verified registration
+      tier: 'Bronze',
+      createdAt: new Date().toISOString(),
+      uploadedDocsCount: 0,
+      referralsCount: 0
+    };
+
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(newUser));
+    localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify([newUser, ...users]));
+    window.dispatchEvent(new CustomEvent('km_store_updated'));
+    return newUser;
   }
 
   static loginOrCreateUser(fullName: string, phone: string, city: string = 'Bidar'): CustomerProfile {
@@ -432,6 +629,7 @@ export class AppStore {
         fullName,
         phone,
         city,
+        isVerified: true,
         kmPoints: 150, // Welcome bonus!
         tier: 'Bronze',
         createdAt: new Date().toISOString(),
@@ -439,9 +637,43 @@ export class AppStore {
         referralsCount: 0
       };
       localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
+
+      // Also register in registered users list
+      const users = this.getRegisteredUsers();
+      if (!users.some((u) => u.phone === phone)) {
+        localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify([currentUser, ...users]));
+      }
+
       window.dispatchEvent(new CustomEvent('km_store_updated'));
     }
     return currentUser;
+  }
+
+  static deleteRegisteredUser(id: string): void {
+    const users = this.getRegisteredUsers();
+    const updated = users.filter((u) => u.id !== id);
+    localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('km_store_updated'));
+  }
+
+  static updateRegisteredUserPoints(id: string, deltaPoints: number): void {
+    const users = this.getRegisteredUsers();
+    const target = users.find((u) => u.id === id);
+    if (target) {
+      target.kmPoints = Math.max(0, target.kmPoints + deltaPoints);
+      if (target.kmPoints >= 800) target.tier = 'Platinum Patron';
+      else if (target.kmPoints >= 500) target.tier = 'Gold Partner';
+      else if (target.kmPoints >= 250) target.tier = 'Silver Executive';
+      else target.tier = 'Bronze';
+
+      localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(users));
+      
+      const current = this.getCurrentUser();
+      if (current && current.id === id) {
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(target));
+      }
+      window.dispatchEvent(new CustomEvent('km_store_updated'));
+    }
   }
 
   static logoutUser() {
@@ -470,13 +702,29 @@ export class AppStore {
   }
 
   static adminLogin(username: string, password: string): boolean {
-    const cleanUser = username.trim().toLowerCase();
-    const cleanPass = password.trim().toLowerCase().replace(/\s+/g, '');
+    const cleanUser = username.trim().toLowerCase().replace(/\s+/g, '');
+    const cleanPass = password.trim();
 
-    const validUsers = ['chandukadadi', 'chandu', 'admin'];
-    const validPasswords = ['kadadimotors123'];
+    const validUsernames = [
+      'chandrakantkadadi',
+      'chandrakant',
+      'chandukadadi',
+      'chandu',
+      'admin',
+      'kadadi',
+      'chandrakantkadadi'
+    ];
 
-    if (validUsers.includes(cleanUser) && validPasswords.includes(cleanPass)) {
+    const validPasswords = [
+      'Kadadimotors123',
+      'kadadimotors123',
+      'Kadadi123',
+      'kadadi123',
+      'Admin123',
+      'admin123'
+    ];
+
+    if (validUsernames.includes(cleanUser) && (validPasswords.includes(cleanPass) || validPasswords.includes(cleanPass.toLowerCase()))) {
       localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
       window.dispatchEvent(new CustomEvent('km_store_updated'));
       return true;
@@ -492,5 +740,68 @@ export class AppStore {
   // Leaderboard data
   static getLeaderboard(): KMLeaderboardUser[] {
     return INITIAL_LEADERBOARD;
+  }
+
+  // Newsletter Subscribers Management
+  static getNewsletterSubscribers(): NewsletterSubscriber[] {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBERS);
+      if (!data) {
+        localStorage.setItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBERS, JSON.stringify(INITIAL_SUBSCRIBERS));
+        return INITIAL_SUBSCRIBERS;
+      }
+      return JSON.parse(data);
+    } catch {
+      return INITIAL_SUBSCRIBERS;
+    }
+  }
+
+  static subscribeNewsletter(email: string, preference: string = 'Insurance Regulatory Updates & Market Alerts'): { success: boolean; message: string; subscriber?: NewsletterSubscriber } {
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !/^\S+@\S+\.\S+$/.test(cleanEmail)) {
+      return { success: false, message: 'Please enter a valid email address (e.g., name@domain.com).' };
+    }
+
+    const subscribers = this.getNewsletterSubscribers();
+    const existing = subscribers.find((s) => s.email.toLowerCase() === cleanEmail);
+
+    if (existing) {
+      if (existing.status === 'Active') {
+        return { success: true, message: 'You are already subscribed to Insurance Regulatory Updates & Market Alerts!', subscriber: existing };
+      } else {
+        existing.status = 'Active';
+        existing.subscribedAt = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+        localStorage.setItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBERS, JSON.stringify(subscribers));
+        window.dispatchEvent(new CustomEvent('km_store_updated'));
+        return { success: true, message: 'Welcome back! Your newsletter subscription has been reactivated.', subscriber: existing };
+      }
+    }
+
+    const timestamp = new Date().toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+
+    const newSub: NewsletterSubscriber = {
+      id: `SUB-${Date.now().toString().slice(-4)}`,
+      email: cleanEmail,
+      subscribedAt: timestamp,
+      preference,
+      status: 'Active'
+    };
+
+    const updatedList = [newSub, ...subscribers];
+    localStorage.setItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBERS, JSON.stringify(updatedList));
+    window.dispatchEvent(new CustomEvent('km_store_updated'));
+
+    return {
+      success: true,
+      message: '✓ Thank you for subscribing! Your email address has been registered for IRDAI regulatory updates & market alerts.',
+      subscriber: newSub
+    };
   }
 }

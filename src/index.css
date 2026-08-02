@@ -72,4 +72,32 @@
   animation: pulse-subtle 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* Print Optimization for Document Previews */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .glass-card, .glass-panel {
+    box-shadow: none !important;
+    background: transparent !important;
+    border: none !important;
+  }
+}
+
 

@@ -18,7 +18,8 @@ import {
   Search,
   ShieldAlert,
   SlidersHorizontal,
-  Bell
+  Bell,
+  Wand2
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -55,14 +56,13 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'doc-checklist-hub', label: 'Required Docs', highlight: true, icon: <FileText className="w-3.5 h-3.5 text-amber-400" /> },
+    { id: 'policy-wizard', label: 'Policy & Doc Wizard', highlight: true, icon: <FileText className="w-3.5 h-3.5 text-orange-300" /> },
     { id: 'sector-details-view', label: 'Sectors Directory' },
-    { id: 'km-points-leaderboard', label: 'KM Rewards', icon: <Trophy className="w-3.5 h-3.5 text-amber-400" /> },
     { id: 'customer-portal', label: 'My Profile', icon: <User className="w-3.5 h-3.5 text-blue-400" /> },
     { id: 'claims-renewals', label: 'Claims & Calculator', icon: <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> },
     { id: 'about', label: 'About & Partners' },
     { id: 'contact', label: 'Contact & Map' },
-    { id: 'admin-portal-login', label: 'Admin Login', icon: <Lock className="w-3.5 h-3.5 text-rose-400" /> }
+    { id: 'admin-portal-login', label: 'Admin Desk', icon: <Lock className="w-3.5 h-3.5 text-rose-300" /> }
   ];
 
   const handleNavClick = (id: string) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   FileText,
@@ -57,6 +57,25 @@ export const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
   const [totalPages] = useState<number>(2);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [isVerified, setIsVerified] = useState<boolean>(doc?.verifiedByAdvisor || false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen || !doc) return null;
 
@@ -225,7 +244,7 @@ export const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({
             {isVerified && (
               <div className="absolute top-6 right-6 z-20 px-3.5 py-1.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 font-mono font-black text-xs uppercase tracking-wider rotate-[-6deg] shadow-2xl flex items-center gap-1.5 backdrop-blur-md">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Verified • Chandu Kadadi Desk</span>
+                <span>Verified • Chandrakant Kadadi Desk</span>
               </div>
             )}
 

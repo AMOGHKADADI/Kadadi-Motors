@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Logo } from './Logo';
 import { BUSINESS_INFO } from '../data/insuranceData';
-import { MapPin, Phone, Mail, Clock, MessageSquare, Shield } from 'lucide-react';
+import { AppStore } from '../lib/store';
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  MessageSquare,
+  Shield,
+  BellRing,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  ShieldCheck,
+  Check
+} from 'lucide-react';
 import logoImg from '../assets/images/kadadi_motors_logo_1785494192983.jpg';
 
 interface FooterProps {
@@ -10,6 +25,123 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) => {
+  const [emailInput, setEmailInput] = useState('');
+  const [selectedTopic, setSelectedTopic] = useState('All Regulatory & Market Alerts');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formStatus, setFormStatus] = useState<{ type: 'idle' | 'success' | 'error'; message: string }>({
+    type: 'idle',
+    message: ''
+  });
+  const [subscriberCount, setSubscriberCount] = useState(150);
+
+  useEffect(() => {
+    const updateCount = () => {
+      const subs = AppStore.getNewsletterSubscribers();
+      setSubscriberCount(subs.filter((s) => s.status === 'Active').length + 148);
+    };
+    updateCount();
+    window.addEventListener('km_store_updated', updateCount);
+    return () => window.removeEventListener('km_store_updated', updateCount);
+  }, []);
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus({ type: 'idle', message: '' });
+
+    const trimmedEmail = emailInput.trim();
+
+    if (!trimmedEmail) {
+      setFormStatus({
+        type: 'error',
+        message: 'Please enter your email address to subscribe.'
+      });
+      return;
+    }
+
+    // Specific email validation format checks
+    if (!trimmedEmail.includes('@')) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Missing "@" symbol (e.g., name@example.com).'
+      });
+      return;
+    }
+
+    const parts = trimmedEmail.split('@');
+    if (parts.length > 2) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Email address cannot contain multiple "@" symbols.'
+      });
+      return;
+    }
+
+    const [username, domain] = parts;
+
+    if (!username) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Missing username prefix before "@" (e.g., name@example.com).'
+      });
+      return;
+    }
+
+    if (!domain) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Missing domain name after "@" (e.g., name@example.com).'
+      });
+      return;
+    }
+
+    if (!domain.includes('.')) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Missing top-level domain extension like .com, .in, or .org.'
+      });
+      return;
+    }
+
+    const domainParts = domain.split('.');
+    const tld = domainParts[domainParts.length - 1];
+    if (!tld || tld.length < 2) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Domain extension must be at least 2 characters (e.g., .com, .in).'
+      });
+      return;
+    }
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setFormStatus({
+        type: 'error',
+        message: 'Invalid email format: Contains invalid characters. Please enter a valid email address.'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      const res = AppStore.subscribeNewsletter(trimmedEmail, selectedTopic);
+      setIsSubmitting(false);
+
+      if (res.success) {
+        setFormStatus({
+          type: 'success',
+          message: res.message
+        });
+        setEmailInput('');
+      } else {
+        setFormStatus({
+          type: 'error',
+          message: res.message
+        });
+      }
+    }, 400);
+  };
+
   return (
     <footer className="bg-slate-950 text-slate-300 border-t border-slate-800">
       
@@ -28,7 +160,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <button
               onClick={onOpenQuoteModal}
-              className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="px-6 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs shadow-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
             >
               Request Free Policy Review
             </button>
@@ -41,6 +173,142 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
               <MapPin className="w-4 h-4 text-amber-400" aria-hidden="true" />
               <span>Get Directions</span>
             </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Insurance Regulatory Updates & Market Alerts Newsletter Sign-Up Box */}
+      <div className="bg-slate-900/90 border-b border-slate-800 py-10 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950/40 p-6 sm:p-10 border border-amber-500/30 shadow-2xl overflow-hidden">
+            
+            {/* Background Glow Accent */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="grid lg:grid-cols-12 gap-8 items-center relative z-10">
+              
+              {/* Left Copy & Badge */}
+              <div className="lg:col-span-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-200 font-mono text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                    <BellRing className="w-3.5 h-3.5 text-orange-300" />
+                    <span>IRDAI & Market Bulletin</span>
+                  </span>
+                  <span className="text-[11px] text-blue-300 font-mono font-bold">
+                    • Direct Advisory Channel
+                  </span>
+                </div>
+
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-white tracking-tight leading-snug">
+                  Insurance Regulatory Updates & Market Alerts
+                </h3>
+
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-xl">
+                  Subscribe to receive official IRDAI regulatory directives, motor third-party tariff revisions, tax exemption updates, and claim settlement guidelines curated directly by Chandrakant Kadadi.
+                </p>
+
+                {/* Preference Pills */}
+                <div className="pt-2 flex flex-wrap gap-2">
+                  {[
+                    'All Regulatory & Market Alerts',
+                    'Motor & Transport Tariff',
+                    'Health & Tax Exemption',
+                    'Commercial Fleet Guidance'
+                  ].map((topic) => (
+                    <button
+                      key={topic}
+                      type="button"
+                      onClick={() => setSelectedTopic(topic)}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                        selectedTopic === topic
+                          ? 'bg-amber-400 text-slate-950 font-black shadow-md'
+                          : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                      }`}
+                    >
+                      {selectedTopic === topic && <Check className="w-3 h-3 text-slate-950" />}
+                      <span>{topic}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Form Input */}
+              <div className="lg:col-span-6">
+                <form onSubmit={handleNewsletterSubmit} noValidate className="space-y-3">
+                  <label htmlFor="footer-newsletter-email" className="block text-xs font-extrabold text-amber-300 uppercase tracking-wider">
+                    Enter Email Address for Updates
+                  </label>
+
+                  <div className="flex flex-col sm:flex-row gap-2.5">
+                    <div className="relative flex-1">
+                      <Mail className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors ${
+                        formStatus.type === 'error' ? 'text-red-400' : 'text-slate-400'
+                      }`} aria-hidden="true" />
+                      <input
+                        id="footer-newsletter-email"
+                        type="email"
+                        value={emailInput}
+                        onChange={(e) => {
+                          setEmailInput(e.target.value);
+                          if (formStatus.type === 'error') {
+                            setFormStatus({ type: 'idle', message: '' });
+                          }
+                        }}
+                        placeholder="e.g., name@example.com"
+                        className={`w-full pl-10 pr-4 py-3.5 rounded-2xl bg-slate-950 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none transition-all font-mono ${
+                          formStatus.type === 'error'
+                            ? 'border-2 border-red-500 ring-2 ring-red-500/40 bg-red-950/20 text-red-100 placeholder-red-300/40'
+                            : 'border border-slate-700 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/40'
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-6 py-3.5 rounded-2xl bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-950 font-black text-xs sm:text-sm shadow-xl transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-95"
+                    >
+                      {isSubmitting ? (
+                        <span>Registering...</span>
+                      ) : (
+                        <>
+                          <span>Subscribe Free</span>
+                          <Send className="w-4 h-4 text-slate-950" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Dynamic Validation Alert Message */}
+                  {formStatus.type === 'error' && (
+                    <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/40 text-red-200 text-xs font-medium flex items-center gap-2 animate-fadeIn">
+                      <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                      <span>{formStatus.message}</span>
+                    </div>
+                  )}
+
+                  {formStatus.type === 'success' && (
+                    <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 text-xs font-bold flex items-center gap-2.5 animate-fadeIn shadow-lg">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                      <span>{formStatus.message}</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono pt-1">
+                    <span className="flex items-center gap-1 text-slate-400">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>No spam • Temporary state storage enabled</span>
+                    </span>
+                    <span className="text-amber-400 font-semibold hidden sm:inline">
+                      Preference: {selectedTopic}
+                    </span>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+
           </div>
         </div>
       </div>
@@ -70,25 +338,25 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
             <h4 className="font-heading font-bold text-white text-xs uppercase tracking-widest text-amber-400">Quick Navigation</h4>
             <ul className="space-y-2 text-xs text-slate-400">
               <li>
-                <button onClick={() => onNavigate('home')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Home Page</button>
+                <button onClick={() => onNavigate('home')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">Home Page</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('about')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">About Kadadi Motors</button>
+                <button onClick={() => onNavigate('about')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">About Kadadi Motors</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('solutions')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Insurance Solutions</button>
+                <button onClick={() => onNavigate('sector-details-view')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">Insurance Sectors</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('process')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Advisory Process</button>
+                <button onClick={() => onNavigate('doc-checklist-hub')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">Document Checklist</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('claims-renewals')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Claims & Renewals</button>
+                <button onClick={() => onNavigate('claims-renewals')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">Claims & Renewals</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('partners')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Partner Insurers</button>
+                <button onClick={() => onNavigate('km-points-leaderboard')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">KM Rewards</button>
               </li>
               <li>
-                <button onClick={() => onNavigate('contact')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline">Contact & Map</button>
+                <button onClick={() => onNavigate('contact')} className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:underline cursor-pointer">Contact & Map</button>
               </li>
             </ul>
           </div>
@@ -163,4 +431,5 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenQuoteModal }) 
     </footer>
   );
 };
+
 

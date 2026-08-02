@@ -186,7 +186,7 @@ export const KmPointsLeaderboard: React.FC<KmPointsLeaderboardProps> = ({
               </div>
               <h4 className="font-heading font-extrabold text-lg text-white">Document Checklist Submission</h4>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Verify and assemble your required documents using our interactive tool and send to Chandu Kadadi Sir.
+                Verify and assemble your required documents using our interactive tool and send to Chandrakant Kadadi Sir.
               </p>
               <span className="inline-block text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">
                 Earn +100 KM Points

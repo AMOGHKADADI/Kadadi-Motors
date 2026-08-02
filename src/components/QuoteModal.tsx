@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { BUSINESS_INFO, INSURANCE_SOLUTIONS } from '../data/insuranceData';
 import { Shield, X, CheckCircle2, MessageSquare, Send } from 'lucide-react';
 
@@ -92,33 +93,87 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
           </p>
         </div>
 
-        {isSubmitted ? (
-          <div className="py-8 text-center space-y-4">
-            <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto animate-bounce" aria-hidden="true" />
-            <h4 className="text-2xl font-heading font-bold text-slate-900">Advisory Request Received!</h4>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
-              Thank you, <strong className="text-slate-900">{fullName}</strong>. Chandrakant Kadadi’s team at Kadadi Motors will evaluate suitable options for <strong>{selectedCategory}</strong> and reach out to you on <strong>{phone}</strong>.
-            </p>
+        <AnimatePresence mode="wait">
+          {isSubmitted ? (
+            <motion.div
+              key="quote-success"
+              initial={{ opacity: 0, scale: 0.9, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+              className="py-6 text-center space-y-5"
+            >
+              {/* Animated Glowing Icon Badge */}
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+                className="relative w-16 h-16 mx-auto"
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.2, 0.6] }}
+                  transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                  className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md pointer-events-none"
+                />
+                <div className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-emerald-600 via-emerald-500 to-emerald-400 text-white flex items-center justify-center border-2 border-emerald-200 shadow-xl shadow-emerald-500/30">
+                  <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+                </div>
+              </motion.div>
 
-            <div className="pt-4 flex flex-col gap-2">
-              <button
-                onClick={handleReset}
-                className="w-full py-3 rounded-xl bg-slate-900 text-white font-bold text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-2"
               >
-                Close Window
-              </button>
-              <a
-                href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Kadadi%20Motors,%20I%20just%20submitted%20a%20request%20for%20${encodeURIComponent(selectedCategory)}.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 text-xs font-bold text-emerald-700 py-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 rounded-lg"
+                <h4 className="text-2xl font-heading font-black text-slate-900">
+                  Advisory Request Received!
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
+                  Thank you, <strong className="text-slate-900">{fullName}</strong>. Chandrakant Kadadi’s advisory desk will evaluate suitable quotes for <strong>{selectedCategory}</strong> and contact you on <strong>+91 {phone}</strong>.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-1"
               >
-                <MessageSquare className="w-4 h-4 text-emerald-600" aria-hidden="true" />
-                <span>Follow up immediately on WhatsApp</span>
-              </a>
-            </div>
-          </div>
-        ) : (
+                <div className="flex justify-between text-slate-500 text-[11px] font-medium">
+                  <span>Inquiry ID</span>
+                  <span className="font-mono font-bold text-slate-900">KM-Q{Math.floor(1000 + Math.random() * 9000)}</span>
+                </div>
+                <div className="flex justify-between text-slate-500 text-[11px] font-medium">
+                  <span>Selected Category</span>
+                  <span className="font-bold text-blue-700">{selectedCategory}</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="pt-2 flex flex-col gap-2"
+              >
+                <button
+                  onClick={handleReset}
+                  className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                >
+                  Done / Close Window
+                </button>
+                <a
+                  href={`https://wa.me/91${BUSINESS_INFO.whatsappRaw}?text=Hi%20Kadadi%20Motors,%20I%20just%20submitted%20a%20request%20for%20${encodeURIComponent(selectedCategory)}.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 text-xs font-bold text-emerald-700 py-2 hover:underline rounded-lg"
+                >
+                  <MessageSquare className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+                  <span>Follow up immediately on WhatsApp</span>
+                </a>
+              </motion.div>
+            </motion.div>
+          ) : (
           <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-left">
             
             <div>
@@ -228,6 +283,7 @@ export const QuoteModal: React.FC<QuoteModalProps> = ({
 
           </form>
         )}
+        </AnimatePresence>
 
       </div>
     </div>

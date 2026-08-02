@@ -4,20 +4,18 @@ import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Hero } from './components/Hero';
 import { TrustStats } from './components/TrustStats';
 import { HomeQuickDirectory } from './components/HomeQuickDirectory';
-import { DocumentChecklistHub } from './components/DocumentChecklistHub';
 import { SectorDetailsView } from './components/SectorDetailsView';
-import { KmPointsLeaderboard } from './components/KmPointsLeaderboard';
 import { CustomerPortal } from './components/CustomerPortal';
 import { AdminPortal } from './components/AdminPortal';
 import { AdvisoryProcess } from './components/AdvisoryProcess';
 import { PartnersSection } from './components/PartnersSection';
 import { PremiumCalculator } from './components/PremiumCalculator';
 import { ClaimsRenewalSupport } from './components/ClaimsRenewalSupport';
-import { TestimonialSection } from './components/TestimonialSection';
 import { FaqSection } from './components/FaqSection';
 import { AboutSection } from './components/AboutSection';
 import { ContactSection } from './components/ContactSection';
 import { CashlessNetworkFinder } from './components/CashlessNetworkFinder';
+import { PolicyFlowWizard } from './components/PolicyFlowWizard';
 import { SectionDivider } from './components/SectionDivider';
 import { QuoteModal } from './components/QuoteModal';
 import { DocumentChecklistModal } from './components/DocumentChecklistModal';
@@ -102,25 +100,36 @@ export default function App() {
               onOpenChecklistModal={() => handleOpenDocChecklist('motor', 'new_policy')}
               onNavigate={handleNavigate}
             />
+            <SectionDivider icon="sparkles" label="Interactive Policy & Document Wizard" />
+            <PolicyFlowWizard
+              onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
+              onNavigate={handleNavigate}
+            />
             <SectionDivider icon="award" label="25+ Years Legacy & Trust Pillars" />
             <TrustStats />
-            <SectionDivider icon="sparkles" label="Insurance Sectors & Document Checklist Hub" />
+            <SectionDivider icon="sparkles" label="Insurance Sectors & Directory" />
             <HomeQuickDirectory
               onNavigate={handleNavigate}
               onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
             />
-            <SectionDivider icon="star" label="Verified Client Testimonials & Stories" />
-            <TestimonialSection />
             <SectionDivider icon="shield" label="Founder Advisory & Commitment" />
             <AboutSection onOpenQuoteModal={() => handleOpenQuoteModal()} />
           </>
         )}
 
-        {/* Page 2: Document Checklist Hub */}
-        {activeSection === 'doc-checklist-hub' && (
-          <DocumentChecklistHub
-            initialCategory="motor"
+        {/* Page 1.5: Dedicated Policy & Document Wizard Page */}
+        {activeSection === 'policy-wizard' && (
+          <PolicyFlowWizard
             onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
+            onNavigate={handleNavigate}
+          />
+        )}
+
+        {/* Page 2: Document Checklist Hub (Forwarded to PolicyFlowWizard) */}
+        {activeSection === 'doc-checklist-hub' && (
+          <PolicyFlowWizard
+            onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
+            onNavigate={handleNavigate}
           />
         )}
 
@@ -135,14 +144,6 @@ export default function App() {
             <SectionDivider icon="shield" label="Bidar Cashless Network Garages & Hospitals" />
             <CashlessNetworkFinder />
           </>
-        )}
-
-        {/* Page 4: KM Points Loyalty Rewards */}
-        {activeSection === 'km-points-leaderboard' && (
-          <KmPointsLeaderboard
-            onOpenChecklist={() => handleNavigate('doc-checklist-hub')}
-            onOpenProfile={() => handleNavigate('customer-portal')}
-          />
         )}
 
         {/* Page 5: Customer Profile Vault */}
@@ -266,7 +267,7 @@ export default function App() {
           title="Chat on WhatsApp"
         >
           <MessageSquare className="w-5 h-5 fill-white" />
-          <span className="hidden sm:inline">WhatsApp Chandu Kadadi</span>
+          <span className="hidden sm:inline">WhatsApp Chandrakant Kadadi</span>
         </a>
 
       </div>

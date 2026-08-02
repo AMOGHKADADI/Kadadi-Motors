@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   X,
   PhoneCall,
@@ -18,6 +18,25 @@ interface EmergencySosModalProps {
 }
 
 export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleOpenEmergencyWhatsApp = (type: string) => {
@@ -95,7 +114,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({ isOpen, on
               <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black shrink-0 text-xs">2</span>
                 <div>
-                  <strong className="text-white block">Notify Chandu Kadadi Sir Before Repairing</strong>
+                  <strong className="text-white block">Notify Chandrakant Kadadi Sir Before Repairing</strong>
                   <span className="text-slate-400">Insurance surveyor inspection is required BEFORE starting vehicle repairs to get 100% cashless approval.</span>
                 </div>
               </div>

@@ -45,7 +45,13 @@ import {
   SlidersHorizontal,
   FileCheck,
   Mail,
-  Eye
+  Eye,
+  Users,
+  CheckSquare,
+  Square,
+  UserX,
+  PlusCircle,
+  CalendarDays
 } from 'lucide-react';
 
 export interface AdminToast {
@@ -65,15 +71,34 @@ export const AdminPortal: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
+  // Main Section Navigation Tab (Inquiries, Registered Users, Quote Builder, Renewals)
+  const [adminSection, setAdminSection] = useState<'inquiries' | 'registered_users' | 'quote_dispatcher' | 'renewals'>('inquiries');
+
   // Dashboard state & Advanced Filters
   const [inquiries, setInquiries] = useState<CustomerInquiry[]>([]);
   const [selectedSector, setSelectedSector] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedRegistration, setSelectedRegistration] = useState<'all' | 'registered' | 'guest'>('all');
   const [selectedDateRange, setSelectedDateRange] = useState<'all' | 'today' | 'last_7_days' | 'last_30_days'>('all');
   const [selectedDocStatus, setSelectedDocStatus] = useState<'all' | 'ready' | 'pending' | 'uploaded'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'action_required' | 'completed'>('all');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState<boolean>(true);
+
+  // Bulk Selection & Spam Management State
+  const [selectedInquiryIds, setSelectedInquiryIds] = useState<string[]>([]);
+
+  // Registered Users Vault State
+  const [registeredUsers, setRegisteredUsers] = useState<any[]>(AppStore.getRegisteredUsers());
+
+  // Quote Builder State
+  const [quoteName, setQuoteName] = useState('');
+  const [quotePhone, setQuotePhone] = useState('');
+  const [quoteCategory, setQuoteCategory] = useState('Motor Commercial / Private Car');
+  const [quoteInsurer, setQuoteInsurer] = useState('Star Health & Allied Insurance');
+  const [quotePremium, setQuotePremium] = useState('14,850');
+  const [quoteSumInsured, setQuoteSumInsured] = useState('₹ 10 Lakhs Coverage');
+  const [quoteAddons, setQuoteAddons] = useState('Zero Depreciation + Engine Protect + Roadside Assistance + Cashless at Bidar Garages');
 
   // Real-time Sync State
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -274,8 +299,8 @@ export const AdminPortal: React.FC = () => {
       if (mail) {
         addAdminToast(
           'system',
-          `📧 Email Dispatched to Chandu Kadadi`,
-          `Alert sent to chandu.kadadi@kadadimotors.com for ${mail.customerName} (${mail.fileName}).`,
+          `📧 Email Dispatched to Chandrakant Kadadi`,
+          `Alert sent to chandrakant.kadadi@kadadimotors.com for ${mail.customerName} (${mail.fileName}).`,
           mail.customerName,
           mail.inquiryId
         );
@@ -355,6 +380,84 @@ export const AdminPortal: React.FC = () => {
     window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
+  // Single delete inquiry handler
+  const handleDeleteSingleInquiry = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete inquiry ${id} for ${name}? This action cannot be undone.`)) {
+      AppStore.deleteInquiry(id);
+      setSelectedInquiryIds((prev) => prev.filter((item) => item !== id));
+      setRefreshNotification(`Inquiry ${id} deleted successfully.`);
+      setTimeout(() => setRefreshNotification(''), 3000);
+    }
+  };
+
+  // Bulk delete selected inquiries handler
+  const handleBulkDeleteInquiries = () => {
+    if (selectedInquiryIds.length === 0) return;
+    if (window.confirm(`Are you sure you want to delete ${selectedInquiryIds.length} selected inquiries?`)) {
+      AppStore.deleteInquiriesBulk(selectedInquiryIds);
+      setRefreshNotification(`Deleted ${selectedInquiryIds.length} selected inquiries.`);
+      setSelectedInquiryIds([]);
+      setTimeout(() => setRefreshNotification(''), 3000);
+    }
+  };
+
+  // Purge Guest / Unregistered Spam handler
+  const handlePurgeGuestSpam = () => {
+    const guestLeads = inquiries.filter((inq) => !AppStore.isPhoneRegistered(inq.phone));
+    if (guestLeads.length === 0) {
+      alert('No unregistered guest leads found to purge.');
+      return;
+    }
+    if (window.confirm(`Found ${guestLeads.length} guest / unregistered leads. Do you want to purge them all to clear spam?`)) {
+      const idsToPurge = guestLeads.map((g) => g.id);
+      AppStore.deleteInquiriesBulk(idsToPurge);
+      setRefreshNotification(`Successfully purged ${idsToPurge.length} guest spam leads.`);
+      setSelectedInquiryIds([]);
+      setTimeout(() => setRefreshNotification(''), 3000);
+    }
+  };
+
+  // Delete registered user handler
+  const handleDeleteRegisteredUser = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete registered user "${name}"?`)) {
+      AppStore.deleteRegisteredUser(id);
+      setRegisteredUsers(AppStore.getRegisteredUsers());
+      setRefreshNotification(`User profile "${name}" deleted.`);
+      setTimeout(() => setRefreshNotification(''), 3000);
+    }
+  };
+
+  // Award user points handler
+  const handleAwardUserPoints = (id: string, deltaPoints: number) => {
+    AppStore.updateRegisteredUserPoints(id, deltaPoints);
+    setRegisteredUsers(AppStore.getRegisteredUsers());
+    setRefreshNotification(`Updated loyalty points by ${deltaPoints > 0 ? '+' : ''}${deltaPoints}.`);
+    setTimeout(() => setRefreshNotification(''), 3000);
+  };
+
+  // Dispatch custom WhatsApp quote
+  const handleDispatchWhatsAppQuote = () => {
+    if (!quoteName.trim() || !quotePhone.trim()) {
+      alert('Please enter customer name and phone number.');
+      return;
+    }
+    let msg = `Hello *${encodeURIComponent(quoteName.trim())}*,%0A%0A`;
+    msg += `This is *Chandrakant Kadadi* from *Kadadi Motors Insurance Advisory, Bidar*.%0A%0A`;
+    msg += `Here is your customized policy quote details:%0A`;
+    msg += `📋 *Insurance Sector:* ${encodeURIComponent(quoteCategory)}%0A`;
+    msg += `🛡️ *Insurer Name:* ${encodeURIComponent(quoteInsurer)}%0A`;
+    msg += `💰 *Coverage / Sum Insured:* ${encodeURIComponent(quoteSumInsured)}%0A`;
+    msg += `🏷️ *Annual Premium:* ₹${encodeURIComponent(quotePremium)}%0A`;
+    if (quoteAddons) {
+      msg += `✨ *Key Benefits & Covers:* ${encodeURIComponent(quoteAddons)}%0A`;
+    }
+    msg += `%0APlease let me know if you would like me to issue this policy today or visit our Udgir Road, Bidar office!`;
+
+    const cleanPhone = quotePhone.replace(/[^0-9]/g, '');
+    const waUrl = `https://wa.me/91${cleanPhone}?text=${msg}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
+  };
+
   // Filtered inquiries list with multi-criteria advanced search
   const filteredInquiries = inquiries.filter((inq) => {
     // 1. Insurance Sector Matching
@@ -370,10 +473,18 @@ export const AdminPortal: React.FC = () => {
       matchTab = inq.status === 'issued';
     }
 
-    // 3. Status Dropdown Matching
+    // 3. Registration Filter Matching
+    let matchRegistration = true;
+    if (selectedRegistration === 'registered') {
+      matchRegistration = AppStore.isPhoneRegistered(inq.phone);
+    } else if (selectedRegistration === 'guest') {
+      matchRegistration = !AppStore.isPhoneRegistered(inq.phone);
+    }
+
+    // 4. Status Dropdown Matching
     const matchStatus = selectedStatus === 'all' || inq.status === selectedStatus;
 
-    // 4. Date Range Matching
+    // 5. Date Range Matching
     let matchDate = true;
     if (selectedDateRange !== 'all') {
       const submittedDate = new Date(inq.submittedAt);
@@ -389,7 +500,7 @@ export const AdminPortal: React.FC = () => {
       }
     }
 
-    // 5. Document Completion Status Matching
+    // 6. Document Completion Status Matching
     let matchDoc = true;
     if (selectedDocStatus === 'ready') {
       matchDoc = Boolean(inq.readyDocs && inq.readyDocs.length > 0) || inq.status === 'verified' || inq.status === 'issued';
@@ -399,7 +510,7 @@ export const AdminPortal: React.FC = () => {
       matchDoc = Boolean(inq.uploadedFiles && inq.uploadedFiles.length > 0);
     }
 
-    // 6. Universal Search Bar Query Matching
+    // 7. Universal Search Bar Query Matching
     const q = searchQuery.trim().toLowerCase();
     const matchSearch =
       !q ||
@@ -411,7 +522,7 @@ export const AdminPortal: React.FC = () => {
       inq.purposeTitle.toLowerCase().includes(q) ||
       (inq.policyNo && inq.policyNo.toLowerCase().includes(q));
 
-    return matchSector && matchTab && matchStatus && matchDate && matchDoc && matchSearch;
+    return matchSector && matchTab && matchRegistration && matchStatus && matchDate && matchDoc && matchSearch;
   });
 
   // Active Filter Helper Calculations
@@ -419,6 +530,7 @@ export const AdminPortal: React.FC = () => {
     (searchQuery.trim() !== '' ? 1 : 0) +
     (selectedSector !== 'all' ? 1 : 0) +
     (selectedStatus !== 'all' ? 1 : 0) +
+    (selectedRegistration !== 'all' ? 1 : 0) +
     (selectedDateRange !== 'all' ? 1 : 0) +
     (selectedDocStatus !== 'all' ? 1 : 0) +
     (activeTab !== 'all' ? 1 : 0);
@@ -650,8 +762,8 @@ export const AdminPortal: React.FC = () => {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Chandu kadadi"
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400 font-medium"
+                placeholder="Chandrakant Kadadi"
+                className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400 font-medium font-mono"
               />
             </div>
 
@@ -662,31 +774,14 @@ export const AdminPortal: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Kadadimotors123"
-                className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400 font-medium"
+                placeholder="••••••••••••"
+                className="w-full px-4 py-3 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400 font-medium font-mono"
               />
-            </div>
-
-            <div className="p-3 rounded-xl bg-amber-400/10 border border-amber-400/30 text-[11px] text-amber-300 flex items-center justify-between">
-              <div>
-                <span className="font-extrabold block">Admin Credentials:</span>
-                <span className="font-mono text-slate-300">Username: <strong className="text-white">Chandu kadadi</strong> | Password: <strong className="text-white">Kadadimotors123</strong></span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setUsername('Chandu kadadi');
-                  setPassword('Kadadimotors123');
-                }}
-                className="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-black text-[10px] hover:bg-amber-300 transition-colors shrink-0"
-              >
-                Auto-fill
-              </button>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 text-slate-950 font-black text-xs shadow-lg transition-all"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-300 text-slate-950 font-black text-xs shadow-lg transition-all cursor-pointer active:scale-98"
             >
               Authenticate & Launch Control Center
             </button>
@@ -757,7 +852,7 @@ export const AdminPortal: React.FC = () => {
             <button
               onClick={() => setShowEmailModal(true)}
               className="relative px-3.5 py-2.5 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 hover:text-amber-300 transition-all flex items-center gap-2 cursor-pointer"
-              title="View Automated Summary Email Dispatch History sent to Chandu Kadadi"
+              title="View Automated Summary Email Dispatch History sent to Chandrakant Kadadi"
             >
               <Mail className="w-4 h-4 text-amber-400" aria-hidden="true" />
               <span className="hidden sm:inline text-xs font-extrabold">Email Service</span>
@@ -853,414 +948,900 @@ export const AdminPortal: React.FC = () => {
           </div>
         </div>
 
-        {/* Inquiry Table & Filters */}
-        <div id="inquiry-register-section" className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-xl">
-          
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-heading font-black text-white">Client Inquiry Register</h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-500/30 text-[10px] font-black uppercase">
-                  {filteredInquiries.length} Records Shown
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">Click any customer inquiry to review documents, award KM points, or send 1-click WhatsApp updates.</p>
-            </div>
-          </div>
+        {/* Top Executive Section Switcher Tabs */}
+        <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+          <button
+            onClick={() => setAdminSection('inquiries')}
+            className={`px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              adminSection === 'inquiries'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4 text-slate-950" />
+            <span>Client Inquiries & Spam Control</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-950 text-amber-300 font-mono font-bold">
+              {inquiries.length}
+            </span>
+          </button>
 
-          {/* Advanced Search & Multi-Filter Control Panel */}
-          <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-4">
+          <button
+            onClick={() => {
+              setRegisteredUsers(AppStore.getRegisteredUsers());
+              setAdminSection('registered_users');
+            }}
+            className={`px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              adminSection === 'registered_users'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Users className="w-4 h-4 text-emerald-400" />
+            <span>Registered Website Users Directory</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-950 text-emerald-400 font-mono font-bold">
+              {registeredUsers.length} Users
+            </span>
+          </button>
+
+          <button
+            onClick={() => setAdminSection('quote_dispatcher')}
+            className={`px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              adminSection === 'quote_dispatcher'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Send className="w-4 h-4 text-blue-400" />
+            <span>Instant WhatsApp Quote Generator</span>
+          </button>
+
+          <button
+            onClick={() => setAdminSection('renewals')}
+            className={`px-4 py-3 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              adminSection === 'renewals'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/20'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <CalendarDays className="w-4 h-4 text-amber-400" />
+            <span>Annual Policy Renewal Reminders</span>
+          </button>
+        </div>
+
+        {/* SECTION 1: INQUIRIES REGISTER & SPAM PURGE */}
+        {adminSection === 'inquiries' && (
+          <div id="inquiry-register-section" className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-xl">
             
-            {/* Control Bar: Primary Search Input & Utility Buttons */}
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-              {/* Universal Search Input */}
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-3" aria-hidden="true" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by customer name, phone, city, ID, requirement or policy no..."
-                  className="w-full pl-10 pr-9 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-white"
-                    title="Clear search"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-heading font-black text-white">Client Inquiry Register</h3>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-400/10 text-amber-300 border border-amber-500/30 text-[10px] font-black uppercase">
+                    {filteredInquiries.length} Records Shown
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">Filter by registered users, purge spam leads, or review documents for instant policy sanctioning.</p>
               </div>
 
-              {/* Utility Action Buttons */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                  className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                    showAdvancedFilters
-                      ? 'bg-amber-400/10 border-amber-400/50 text-amber-300'
-                      : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Filters</span>
+              {/* Quick Spam Purge Button */}
+              <button
+                onClick={handlePurgeGuestSpam}
+                className="px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
+                title="Purge all unregistered guest submissions to keep ledger spam-free"
+              >
+                <UserX className="w-4 h-4 text-rose-400" />
+                <span>Purge Unregistered Spam Leads</span>
+              </button>
+            </div>
+
+            {/* Bulk Selection Actions Bar */}
+            {selectedInquiryIds.length > 0 && (
+              <div className="p-3.5 rounded-2xl bg-amber-400 text-slate-950 font-bold text-xs flex flex-wrap items-center justify-between gap-3 shadow-xl animate-fadeIn">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="w-4 h-4 text-slate-950" />
+                  <span>{selectedInquiryIds.length} lead(s) selected for bulk management</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleBulkDeleteInquiries}
+                    className="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-extrabold hover:bg-rose-700 flex items-center gap-1 cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Selected Spam ({selectedInquiryIds.length})</span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedInquiryIds([])}
+                    className="px-2.5 py-1.5 rounded-xl bg-slate-950 text-amber-300 font-bold hover:bg-slate-900 cursor-pointer"
+                  >
+                    Clear Selection
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Advanced Search & Multi-Filter Control Panel */}
+            <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-4">
+              
+              {/* Control Bar: Primary Search Input & Utility Buttons */}
+              <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+                {/* Universal Search Input */}
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-3" aria-hidden="true" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by customer name, phone, city, ID, requirement or policy no..."
+                    className="w-full pl-10 pr-9 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-medium"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                      title="Clear search"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Utility Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                    className={`px-3.5 py-2.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                      showAdvancedFilters
+                        ? 'bg-amber-400/10 border-amber-400/50 text-amber-300'
+                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Filters</span>
+                    {activeFiltersCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
+                        {activeFiltersCount}
+                      </span>
+                    )}
+                  </button>
+
                   {activeFiltersCount > 0 && (
-                    <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black">
-                      {activeFiltersCount}
+                    <button
+                      onClick={resetAllFilters}
+                      className="px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                      title="Reset all active search filters"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
+                      <span className="hidden sm:inline">Reset</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => fetchLatestInquiries(true)}
+                    disabled={isRefreshing}
+                    className="px-3 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs text-amber-300 font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="Sync Latest Data"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    <span className="hidden sm:inline">Sync</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowExportModal(true)}
+                    className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer"
+                    title="Export Inquiries into Formatted CSV Report"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-slate-950" />
+                    <span className="hidden sm:inline">Export CSV</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Expandable Multi-Criteria Filter Controls Grid */}
+              {showAdvancedFilters && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-3 border-t border-slate-800/80 animate-fadeIn">
+                  
+                  {/* 1. Website Registration Filter */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <UserCheck className="w-3 h-3 text-amber-400" />
+                      <span>User Registration</span>
+                    </label>
+                    <select
+                      value={selectedRegistration}
+                      onChange={(e) => setSelectedRegistration(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-amber-500/40 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-bold"
+                    >
+                      <option value="all">All Submissions</option>
+                      <option value="registered">Registered Website Users Only</option>
+                      <option value="guest">Unregistered Guest Leads</option>
+                    </select>
+                  </div>
+
+                  {/* 2. Insurance Sector Selector */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <Filter className="w-3 h-3 text-amber-400" />
+                      <span>Insurance Sector</span>
+                    </label>
+                    <select
+                      value={selectedSector}
+                      onChange={(e) => setSelectedSector(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="all">All Insurance Sectors</option>
+                      <option value="motor">Motor & Transport Vehicles</option>
+                      <option value="health">Health & Medical Plans</option>
+                      <option value="business">Business, Shop & Fire</option>
+                      <option value="life">Life, Term & Savings</option>
+                      <option value="general">General & Personal Accident</option>
+                    </select>
+                  </div>
+
+                  {/* 3. Date Range Filter */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-amber-400" />
+                      <span>Date Submitted Range</span>
+                    </label>
+                    <select
+                      value={selectedDateRange}
+                      onChange={(e) => setSelectedDateRange(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="all">All Dates / All Time</option>
+                      <option value="today">Submitted Today</option>
+                      <option value="last_7_days">Last 7 Days</option>
+                      <option value="last_30_days">Last 30 Days</option>
+                    </select>
+                  </div>
+
+                  {/* 4. Document Completion Status */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <FileCheck className="w-3 h-3 text-amber-400" />
+                      <span>Doc Completion Status</span>
+                    </label>
+                    <select
+                      value={selectedDocStatus}
+                      onChange={(e) => setSelectedDocStatus(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="all">All Document States</option>
+                      <option value="ready">Has Ready Verified Docs</option>
+                      <option value="pending">Has Pending Required Docs</option>
+                      <option value="uploaded">Customer Uploaded Direct Files</option>
+                    </select>
+                  </div>
+
+                  {/* 5. Workflow Stage */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-amber-400" />
+                      <span>Workflow Stage</span>
+                    </label>
+                    <select
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    >
+                      <option value="all">All Workflow Stages</option>
+                      <option value="pending">Pending Advisory Review</option>
+                      <option value="docs_uploaded">Docs Uploaded (Under Verification)</option>
+                      <option value="verified">Verified (Ready for Issuance)</option>
+                      <option value="issued">Policy Issued & Active</option>
+                      <option value="rejected">Inquiry Closed / Cancelled</option>
+                    </select>
+                  </div>
+
+                </div>
+              )}
+
+              {/* Active Filters Badge Strip */}
+              {activeFiltersCount > 0 && (
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60 text-xs">
+                  <span className="text-[11px] font-bold text-slate-400">Active Filters:</span>
+
+                  {selectedRegistration !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">
+                      Registration: {selectedRegistration === 'registered' ? 'Registered Users Only' : 'Guest Leads Only'}
+                      <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedRegistration('all')} />
                     </span>
                   )}
-                </button>
 
-                {activeFiltersCount > 0 && (
+                  {searchQuery && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium">
+                      Search: "{searchQuery}"
+                      <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSearchQuery('')} />
+                    </span>
+                  )}
+
+                  {selectedSector !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium capitalize">
+                      Sector: {selectedSector}
+                      <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedSector('all')} />
+                    </span>
+                  )}
+
                   <button
                     onClick={resetAllFilters}
-                    className="px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-rose-400 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-                    title="Reset all active search filters"
+                    className="text-[11px] font-extrabold text-rose-400 hover:underline ml-auto cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
-                    <span className="hidden sm:inline">Reset</span>
+                    Clear All Filters
                   </button>
-                )}
+                </div>
+              )}
 
-                <button
-                  onClick={() => fetchLatestInquiries(true)}
-                  disabled={isRefreshing}
-                  className="px-3 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs text-amber-300 font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-                  title="Sync Latest Data"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">Sync</span>
-                </button>
-
-                <button
-                  onClick={() => setShowExportModal(true)}
-                  className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer"
-                  title="Export Inquiries into Formatted CSV Report"
-                >
-                  <FileSpreadsheet className="w-4 h-4 text-slate-950" />
-                  <span className="hidden sm:inline">Export CSV</span>
-                </button>
-              </div>
             </div>
 
-            {/* Expandable Multi-Criteria Filter Controls Grid */}
-            {showAdvancedFilters && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800/80 animate-fadeIn">
-                
-                {/* 1. Insurance Sector Selector */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                    <Filter className="w-3 h-3 text-amber-400" />
-                    <span>Insurance Sector</span>
-                  </label>
-                  <select
-                    value={selectedSector}
-                    onChange={(e) => setSelectedSector(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="all">All Insurance Sectors</option>
-                    <option value="motor">Motor & Transport Vehicles</option>
-                    <option value="health">Health & Medical Plans</option>
-                    <option value="business">Business, Shop & Fire</option>
-                    <option value="life">Life, Term & Savings</option>
-                    <option value="general">General & Personal Accident</option>
-                  </select>
-                </div>
+            {/* Dedicated Status Tabs (Pending, Action Required, Completed, All) */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-950 border border-slate-800/80">
+              <button
+                onClick={() => setActiveTab('pending')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
+                  activeTab === 'pending'
+                    ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20 font-black'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                }`}
+              >
+                <Clock className={`w-4 h-4 ${activeTab === 'pending' ? 'text-slate-950' : 'text-amber-400'}`} aria-hidden="true" />
+                <span>Pending</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                  activeTab === 'pending' ? 'bg-slate-950 text-amber-300' : 'bg-slate-900 text-amber-400 border border-amber-500/20'
+                }`}>
+                  {pendingCount}
+                </span>
+              </button>
 
-                {/* 2. Date Range Filter */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                    <Calendar className="w-3 h-3 text-amber-400" />
-                    <span>Date Submitted Range</span>
-                  </label>
-                  <select
-                    value={selectedDateRange}
-                    onChange={(e) => setSelectedDateRange(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="all">All Dates / All Time</option>
-                    <option value="today">Submitted Today</option>
-                    <option value="last_7_days">Last 7 Days</option>
-                    <option value="last_30_days">Last 30 Days</option>
-                  </select>
-                </div>
+              <button
+                onClick={() => setActiveTab('action_required')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
+                  activeTab === 'action_required'
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20 font-black'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                }`}
+              >
+                <AlertCircle className={`w-4 h-4 ${activeTab === 'action_required' ? 'text-white' : 'text-blue-400'}`} aria-hidden="true" />
+                <span>Action Required</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                  activeTab === 'action_required' ? 'bg-slate-950 text-blue-300' : 'bg-slate-900 text-blue-400 border border-blue-500/20'
+                }`}>
+                  {docsUploadedCount}
+                </span>
+              </button>
 
-                {/* 3. Document Completion Status */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                    <FileCheck className="w-3 h-3 text-amber-400" />
-                    <span>Doc Completion Status</span>
-                  </label>
-                  <select
-                    value={selectedDocStatus}
-                    onChange={(e) => setSelectedDocStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="all">All Document States</option>
-                    <option value="ready">Has Ready Verified Docs</option>
-                    <option value="pending">Has Pending Required Docs</option>
-                    <option value="uploaded">Customer Uploaded Direct Files</option>
-                  </select>
-                </div>
+              <button
+                onClick={() => setActiveTab('completed')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
+                  activeTab === 'completed'
+                    ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 font-black'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                }`}
+              >
+                <CheckCircle2 className={`w-4 h-4 ${activeTab === 'completed' ? 'text-slate-950' : 'text-emerald-400'}`} aria-hidden="true" />
+                <span>Completed</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                  activeTab === 'completed' ? 'bg-slate-950 text-emerald-300' : 'bg-slate-900 text-emerald-400 border border-emerald-500/20'
+                }`}>
+                  {completedCount}
+                </span>
+              </button>
 
-                {/* 4. Workflow Stage */}
-                <div className="space-y-1">
-                  <label className="text-[11px] font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 text-amber-400" />
-                    <span>Workflow Stage</span>
-                  </label>
-                  <select
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
-                  >
-                    <option value="all">All Workflow Stages</option>
-                    <option value="pending">Pending Advisory Review</option>
-                    <option value="docs_uploaded">Docs Uploaded (Under Verification)</option>
-                    <option value="verified">Verified (Ready for Issuance)</option>
-                    <option value="issued">Policy Issued & Active</option>
-                    <option value="rejected">Inquiry Closed / Cancelled</option>
-                  </select>
-                </div>
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
+                  activeTab === 'all'
+                    ? 'bg-slate-800 text-white border border-slate-700 shadow-md font-black'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                }`}
+              >
+                <ShieldCheck className={`w-4 h-4 ${activeTab === 'all' ? 'text-amber-400' : 'text-slate-400'}`} aria-hidden="true" />
+                <span>All Inquiries</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-900 text-slate-300 border border-slate-800">
+                  {totalInquiries}
+                </span>
+              </button>
+            </div>
 
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                    <th className="py-3 px-3 w-8">
+                      <input
+                        type="checkbox"
+                        checked={filteredInquiries.length > 0 && selectedInquiryIds.length === filteredInquiries.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedInquiryIds(filteredInquiries.map((i) => i.id));
+                          } else {
+                            setSelectedInquiryIds([]);
+                          }
+                        }}
+                        className="rounded border-slate-700 text-amber-400 focus:ring-amber-400"
+                      />
+                    </th>
+                    <th className="py-3 px-4">Inquiry ID</th>
+                    <th className="py-3 px-4">Client Name & Phone</th>
+                    <th className="py-3 px-4">User Status</th>
+                    <th className="py-3 px-4">Insurance Category</th>
+                    <th className="py-3 px-4">Ready Docs</th>
+                    <th className="py-3 px-4">Uploaded Files</th>
+                    <th className="py-3 px-4">Stage</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {filteredInquiries.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="py-12 text-center text-slate-400">
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <Clock className="w-8 h-8 text-slate-600 animate-bounce" aria-hidden="true" />
+                          <span className="font-bold text-sm text-slate-300">No customer inquiries found in this view.</span>
+                          <p className="text-xs text-slate-500 max-w-sm">
+                            Try clearing your search filters or switching tabs to view registered user leads.
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredInquiries.map((inq) => {
+                      const isRegistered = AppStore.isPhoneRegistered(inq.phone);
+                      const isSelected = selectedInquiryIds.includes(inq.id);
+
+                      return (
+                        <tr key={inq.id} className={`hover:bg-slate-800/50 transition-colors ${isSelected ? 'bg-amber-500/10' : ''}`}>
+                          <td className="py-3.5 px-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedInquiryIds((prev) => [...prev, inq.id]);
+                                } else {
+                                  setSelectedInquiryIds((prev) => prev.filter((id) => id !== inq.id));
+                                }
+                              }}
+                              className="rounded border-slate-700 text-amber-400 focus:ring-amber-400"
+                            />
+                          </td>
+
+                          <td className="py-3.5 px-4 font-mono font-bold text-amber-400">{inq.id}</td>
+                          
+                          <td className="py-3.5 px-4 font-bold text-white">
+                            <div>{inq.customerName}</div>
+                            <div className="text-[10px] text-slate-400 font-normal">{inq.phone} • {inq.city}</div>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            {isRegistered ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                <UserCheck className="w-3 h-3 text-emerald-400" />
+                                <span>Registered User</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                                <span>Guest Lead</span>
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-slate-300">
+                            <div className="font-semibold">{inq.categoryTitle}</div>
+                            <div className="text-[10px] text-slate-500">{inq.purposeTitle}</div>
+                          </td>
+
+                          <td className="py-3.5 px-4 text-emerald-400 font-semibold">
+                            {inq.readyDocs.length} Ready / {inq.pendingDocs.length} Pending
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            {inq.uploadedFiles && inq.uploadedFiles.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {inq.uploadedFiles.map((f, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => {
+                                      setPreviewDoc({
+                                        fileName: f.name,
+                                        fileSize: '1.4 MB',
+                                        uploadDate: new Date(inq.submittedAt).toLocaleDateString('en-IN'),
+                                        customerName: inq.customerName,
+                                        customerPhone: inq.phone,
+                                        inquiryId: inq.id,
+                                        categoryTitle: inq.categoryTitle,
+                                        verifiedByAdvisor: inq.status === 'verified' || inq.status === 'issued'
+                                      });
+                                      setShowPreviewModal(true);
+                                    }}
+                                    className="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-[10px] text-amber-300 font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
+                                    title="Inspect document in-browser without downloading"
+                                  >
+                                    <Eye className="w-3 h-3 text-amber-400 shrink-0" />
+                                    <span className="truncate max-w-[110px]">{f.name}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-[10px] text-slate-500 italic">No files attached</span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
+                              inq.status === 'issued'
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                : inq.status === 'verified'
+                                ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                            }`}>
+                              {inq.status.toUpperCase()}
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4 text-right space-x-1.5">
+                            <button
+                              onClick={() => setSelectedInquiry(inq)}
+                              className="px-2.5 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-[11px] hover:bg-amber-300 transition-all cursor-pointer"
+                            >
+                              Review
+                            </button>
+
+                            <button
+                              onClick={() => handleGenerateWhatsAppReply(inq)}
+                              className="px-2 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-500 transition-all cursor-pointer"
+                              title="Send WhatsApp confirmation"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5 inline" aria-hidden="true" />
+                            </button>
+
+                            <button
+                              onClick={() => handleDeleteSingleInquiry(inq.id, inq.customerName)}
+                              className="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-rose-950 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-500/50 transition-all cursor-pointer"
+                              title="Delete inquiry lead (Spam Removal)"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 inline" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        )}
+
+        {/* SECTION 2: REGISTERED USERS DIRECTORY */}
+        {adminSection === 'registered_users' && (
+          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+              <div>
+                <h3 className="text-xl font-heading font-black text-white flex items-center gap-2">
+                  <Users className="w-5 h-5 text-emerald-400" />
+                  <span>Genuine Registered Clients Directory</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Verified client accounts registered through the Kadadi Motors self-service portal in Bidar.
+                </p>
               </div>
-            )}
 
-            {/* Active Filters Badge Strip */}
-            {activeFiltersCount > 0 && (
-              <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/60 text-xs">
-                <span className="text-[11px] font-bold text-slate-400">Active Filters:</span>
+              <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{registeredUsers.length} Genuine Verified Clients</span>
+              </span>
+            </div>
 
-                {searchQuery && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium">
-                    Search: "{searchQuery}"
-                    <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSearchQuery('')} />
-                  </span>
-                )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {registeredUsers.map((u) => (
+                <div key={u.id} className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4 relative hover:border-amber-500/50 transition-all shadow-lg flex flex-col justify-between">
+                  
+                  <div className="space-y-3">
+                    {/* Header Badges */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                            {u.id}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
+                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                            <span>Genuine Client</span>
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-heading font-black text-white pt-1">{u.fullName}</h4>
+                      </div>
 
-                {selectedSector !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium capitalize">
-                    Sector: {selectedSector}
-                    <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedSector('all')} />
-                  </span>
-                )}
+                      <button
+                        onClick={() => handleDeleteRegisteredUser(u.id, u.fullName)}
+                        className="p-2 rounded-xl bg-slate-900 hover:bg-rose-950 text-slate-400 hover:text-rose-400 border border-slate-800 hover:border-rose-500/40 transition-all cursor-pointer shrink-0"
+                        title="Delete user profile"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
 
-                {selectedDateRange !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium">
-                    Date: {selectedDateRange.replace(/_/g, ' ')}
-                    <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedDateRange('all')} />
-                  </span>
-                )}
+                    {/* Client Contact & Location Details */}
+                    <div className="space-y-1.5 text-xs text-slate-300 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                      <div className="flex items-center gap-2 text-emerald-400 font-mono font-bold">
+                        <UserCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{u.phone}</span>
+                      </div>
 
-                {selectedDocStatus !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium capitalize">
-                    Doc Status: {selectedDocStatus}
-                    <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedDocStatus('all')} />
-                  </span>
-                )}
+                      {u.email && (
+                        <div className="flex items-center gap-2 text-slate-300 font-medium truncate">
+                          <Mail className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                          <span className="truncate">{u.email}</span>
+                        </div>
+                      )}
 
-                {selectedStatus !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/30 text-amber-300 font-medium capitalize">
-                    Stage: {selectedStatus}
-                    <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedStatus('all')} />
-                  </span>
-                )}
+                      <div className="flex items-center gap-2 text-slate-300">
+                        <Building className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span>{u.city || 'Bidar'}{u.pincode ? ` - ${u.pincode}` : ''}</span>
+                      </div>
+
+                      {u.vehicleOrPolicyNo && (
+                        <div className="flex items-center gap-2 pt-1">
+                          <span className="text-[10px] text-slate-400 font-bold uppercase">Vehicle/Policy RC:</span>
+                          <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono font-bold text-[11px]">
+                            {u.vehicleOrPolicyNo}
+                          </span>
+                        </div>
+                      )}
+
+                      {u.preferredCategory && (
+                        <div className="text-[11px] text-slate-400 pt-0.5">
+                          <span className="font-bold text-slate-300">Requirement:</span> {u.preferredCategory}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Tier & Loyalty Points */}
+                    <div className="p-3 rounded-xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold block uppercase">Loyalty Tier</span>
+                        <span className="font-extrabold text-amber-300">{u.tier || 'Bronze'}</span>
+                      </div>
+
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold block uppercase">KM Points</span>
+                        <span className="font-extrabold text-emerald-400 font-mono">{u.kmPoints} Pts</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
+                    <button
+                      onClick={() => {
+                        const waUrl = `https://wa.me/91${u.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(u.fullName)},%20this%20is%20Chandrakant%20Kadadi%20from%20Kadadi%20Motors%20Bidar.`;
+                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+                      }}
+                      className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>WhatsApp</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleAwardUserPoints(u.id, 100)}
+                      className="py-2 px-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs flex items-center gap-1 transition-all cursor-pointer"
+                      title="Award 100 Bonus KM Points"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" />
+                      <span>+100 Pts</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSearchQuery(u.phone);
+                        setAdminSection('inquiries');
+                      }}
+                      className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all cursor-pointer"
+                      title="Filter inquiries for this user"
+                    >
+                      <span>Inquiries</span>
+                    </button>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* SECTION 3: INSTANT WHATSAPP QUOTE GENERATOR */}
+        {adminSection === 'quote_dispatcher' && (
+          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-xl">
+            <div className="border-b border-slate-800/80 pb-4">
+              <h3 className="text-xl font-heading font-black text-white flex items-center gap-2">
+                <Send className="w-5 h-5 text-amber-400" />
+                <span>Instant WhatsApp Quote Generator</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">Compose and send custom insurance policy quotes directly to customer WhatsApp phones in Bidar.</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Form Input */}
+              <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Customer Full Name</label>
+                  <input
+                    type="text"
+                    value={quoteName}
+                    onChange={(e) => setQuoteName(e.target.value)}
+                    placeholder="e.g., Veeresh Patil"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">WhatsApp Mobile Number</label>
+                  <input
+                    type="text"
+                    value={quotePhone}
+                    onChange={(e) => setQuotePhone(e.target.value)}
+                    placeholder="e.g., 98451 22345"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-mono font-medium"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">Insurance Category</label>
+                    <input
+                      type="text"
+                      value={quoteCategory}
+                      onChange={(e) => setQuoteCategory(e.target.value)}
+                      placeholder="e.g., Commercial Vehicle"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">Insurance Partner</label>
+                    <input
+                      type="text"
+                      value={quoteInsurer}
+                      onChange={(e) => setQuoteInsurer(e.target.value)}
+                      placeholder="e.g., Star Health / Tata AIG"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">Annual Premium (₹)</label>
+                    <input
+                      type="text"
+                      value={quotePremium}
+                      onChange={(e) => setQuotePremium(e.target.value)}
+                      placeholder="e.g., 14,850"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-mono font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 mb-1">Sum Insured / IDV</label>
+                    <input
+                      type="text"
+                      value={quoteSumInsured}
+                      onChange={(e) => setQuoteSumInsured(e.target.value)}
+                      placeholder="e.g., ₹ 10 Lakhs"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Key Covers & Add-ons</label>
+                  <textarea
+                    rows={3}
+                    value={quoteAddons}
+                    onChange={(e) => setQuoteAddons(e.target.value)}
+                    placeholder="e.g., Zero Depreciation, Engine Protect, Cashless in Bidar garages"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400 font-medium"
+                  />
+                </div>
 
                 <button
-                  onClick={resetAllFilters}
-                  className="text-[11px] font-extrabold text-rose-400 hover:underline ml-auto cursor-pointer"
+                  onClick={handleDispatchWhatsAppQuote}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
                 >
-                  Clear All
+                  <MessageSquare className="w-4 h-4 text-slate-950" />
+                  <span>Dispatch Quote to WhatsApp</span>
                 </button>
               </div>
-            )}
 
+              {/* Message Live Preview */}
+              <div className="space-y-3">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Live Message Preview</span>
+                <div className="p-5 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-100 font-sans text-xs space-y-3 shadow-inner">
+                  <p>Hello <strong>{quoteName || '[Customer Name]'}</strong>,</p>
+                  <p>This is <strong>Chandrakant Kadadi</strong> from <strong>Kadadi Motors Insurance Advisory, Bidar</strong>.</p>
+                  <p>Here is your customized policy quote details:</p>
+                  <ul className="space-y-1 pl-2 border-l-2 border-emerald-500/50">
+                    <li>📋 <strong>Category:</strong> {quoteCategory}</li>
+                    <li>🛡️ <strong>Insurer:</strong> {quoteInsurer}</li>
+                    <li>💰 <strong>Coverage:</strong> {quoteSumInsured}</li>
+                    <li>🏷️ <strong>Annual Premium:</strong> ₹{quotePremium}</li>
+                    {quoteAddons && <li>✨ <strong>Covers:</strong> {quoteAddons}</li>}
+                  </ul>
+                  <p className="text-[11px] text-emerald-300 italic pt-2">
+                    Please let me know if you would like me to issue this policy today or visit our Udgir Road, Bidar office!
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        )}
 
-          {/* Dedicated Status Tabs (Pending, Action Required, Completed, All) */}
-          <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-950 border border-slate-800/80">
-            <button
-              onClick={() => setActiveTab('pending')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
-                activeTab === 'pending'
-                  ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20 font-black'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <Clock className={`w-4 h-4 ${activeTab === 'pending' ? 'text-slate-950' : 'text-amber-400'}`} aria-hidden="true" />
-              <span>Pending</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                activeTab === 'pending' ? 'bg-slate-950 text-amber-300' : 'bg-slate-900 text-amber-400 border border-amber-500/20'
-              }`}>
-                {pendingCount}
-              </span>
-            </button>
+        {/* SECTION 4: ANNUAL POLICY RENEWAL REMINDERS */}
+        {adminSection === 'renewals' && (
+          <div className="bg-slate-900 rounded-3xl p-6 border border-slate-800 space-y-6 shadow-xl">
+            <div className="border-b border-slate-800/80 pb-4">
+              <h3 className="text-xl font-heading font-black text-white flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-amber-400" />
+                <span>Annual Policy Renewal Reminders (Bidar HQ)</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">Upcoming motor and health policy expirations requiring Chandrakant Kadadi renewal alerts.</p>
+            </div>
 
-            <button
-              onClick={() => setActiveTab('action_required')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
-                activeTab === 'action_required'
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20 font-black'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <AlertCircle className={`w-4 h-4 ${activeTab === 'action_required' ? 'text-white' : 'text-blue-400'}`} aria-hidden="true" />
-              <span>Action Required</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                activeTab === 'action_required' ? 'bg-slate-950 text-blue-300' : 'bg-slate-900 text-blue-400 border border-blue-500/20'
-              }`}>
-                {docsUploadedCount}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('completed')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
-                activeTab === 'completed'
-                  ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 font-black'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <CheckCircle2 className={`w-4 h-4 ${activeTab === 'completed' ? 'text-slate-950' : 'text-emerald-400'}`} aria-hidden="true" />
-              <span>Completed</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                activeTab === 'completed' ? 'bg-slate-950 text-emerald-300' : 'bg-slate-900 text-emerald-400 border border-emerald-500/20'
-              }`}>
-                {completedCount}
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 focus:outline-none ${
-                activeTab === 'all'
-                  ? 'bg-slate-800 text-white border border-slate-700 shadow-md font-black'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900'
-              }`}
-            >
-              <ShieldCheck className={`w-4 h-4 ${activeTab === 'all' ? 'text-amber-400' : 'text-slate-400'}`} aria-hidden="true" />
-              <span>All Inquiries</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-900 text-slate-300 border border-slate-800">
-                {totalInquiries}
-              </span>
-            </button>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
-                  <th className="py-3 px-4">Inquiry ID</th>
-                  <th className="py-3 px-4">Client Name & Phone</th>
-                  <th className="py-3 px-4">Insurance Category</th>
-                  <th className="py-3 px-4">Ready Docs</th>
-                  <th className="py-3 px-4">Uploaded Files (Preview)</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {filteredInquiries.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-slate-400">
-                      <div className="flex flex-col items-center justify-center space-y-2">
-                        <Clock className="w-8 h-8 text-slate-600 animate-bounce" aria-hidden="true" />
-                        <span className="font-bold text-sm text-slate-300">No customer inquiries found in this view.</span>
-                        <p className="text-xs text-slate-500 max-w-sm">
-                          Try switching tabs or clearing your search filter to see more client inquiries.
-                        </p>
-                      </div>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                    <th className="py-3 px-4">Client Name</th>
+                    <th className="py-3 px-4">Policy / Vehicle No</th>
+                    <th className="py-3 px-4">Insurer</th>
+                    <th className="py-3 px-4">Expiration Date</th>
+                    <th className="py-3 px-4">Est. Premium</th>
+                    <th className="py-3 px-4 text-right">Action</th>
                   </tr>
-                ) : (
-                  filteredInquiries.map((inq) => (
-                    <tr key={inq.id} className="hover:bg-slate-800/50 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-amber-400">{inq.id}</td>
-                    
-                    <td className="py-3.5 px-4 font-bold text-white">
-                      <div>{inq.customerName}</div>
-                      <div className="text-[10px] text-slate-400 font-normal">{inq.phone} • {inq.city}</div>
-                    </td>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { name: 'Veeresh Patil', phone: '98451 22345', policyNo: 'KA-38-M-4512', insurer: 'Tata AIG General', expiry: 'In 12 Days (14 Aug 2026)', est: '₹12,450' },
+                    { name: 'Anand Kumar Biradar', phone: '99023 88120', policyNo: 'STAR-HEALTH-99210', insurer: 'Star Health', expiry: 'In 18 Days (20 Aug 2026)', est: '₹18,900' },
+                    { name: 'Rajeshwar Swamy', phone: '97312 44510', policyNo: 'BAJAJ-ALL-FIRE-882104', insurer: 'Bajaj Allianz', expiry: 'In 25 Days (27 Aug 2026)', est: '₹24,500' },
+                    { name: 'Santosh Deshmukh', phone: '94481 99321', policyNo: 'KA-38-P-9011', insurer: 'ICICI Lombard', expiry: 'In 30 Days (01 Sep 2026)', est: '₹8,200' }
+                  ].map((row, idx) => (
+                    <tr key={idx} className="hover:bg-slate-800/50 transition-colors">
+                      <td className="py-3.5 px-4 font-bold text-white">
+                        <div>{row.name}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">{row.phone}</div>
+                      </td>
 
-                    <td className="py-3.5 px-4 text-slate-300">
-                      <div className="font-semibold">{inq.categoryTitle}</div>
-                      <div className="text-[10px] text-slate-500">{inq.purposeTitle}</div>
-                    </td>
+                      <td className="py-3.5 px-4 font-mono text-amber-400 font-bold">{row.policyNo}</td>
+                      <td className="py-3.5 px-4 text-slate-300 font-medium">{row.insurer}</td>
+                      <td className="py-3.5 px-4 text-rose-400 font-bold">{row.expiry}</td>
+                      <td className="py-3.5 px-4 font-mono font-bold text-emerald-400">{row.est}</td>
 
-                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">
-                      {inq.readyDocs.length} Ready / {inq.pendingDocs.length} Pending
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      {inq.uploadedFiles && inq.uploadedFiles.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {inq.uploadedFiles.map((f, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => {
-                                setPreviewDoc({
-                                  fileName: f.name,
-                                  fileSize: '1.4 MB',
-                                  uploadDate: new Date(inq.submittedAt).toLocaleDateString('en-IN'),
-                                  customerName: inq.customerName,
-                                  customerPhone: inq.phone,
-                                  inquiryId: inq.id,
-                                  categoryTitle: inq.categoryTitle,
-                                  verifiedByAdvisor: inq.status === 'verified' || inq.status === 'issued'
-                                });
-                                setShowPreviewModal(true);
-                              }}
-                              className="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-500/40 text-[10px] text-amber-300 font-mono font-bold flex items-center gap-1 transition-all cursor-pointer"
-                              title="Inspect document in-browser without downloading"
-                            >
-                              <Eye className="w-3 h-3 text-amber-400 shrink-0" />
-                              <span className="truncate max-w-[110px]">{f.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-slate-500 italic">No files attached</span>
-                      )}
-                    </td>
-
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold ${
-                        inq.status === 'issued'
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                          : inq.status === 'verified'
-                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      }`}>
-                        {inq.status.toUpperCase()}
-                      </span>
-                    </td>
-
-                    <td className="py-3.5 px-4 text-right space-x-2">
-                      <button
-                        onClick={() => setSelectedInquiry(inq)}
-                        className="px-3 py-1.5 rounded-lg bg-amber-400 text-slate-950 font-bold text-[11px] hover:bg-amber-300"
-                      >
-                        Review & Approve
-                      </button>
-
-                      <button
-                        onClick={() => handleGenerateWhatsAppReply(inq)}
-                        className="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-500"
-                        title="Send WhatsApp confirmation"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5 inline" aria-hidden="true" />
-                      </button>
-                    </td>
-                  </tr>
-                )))}
-              </tbody>
-            </table>
+                      <td className="py-3.5 px-4 text-right">
+                        <button
+                          onClick={() => {
+                            const msg = `Hello *${encodeURIComponent(row.name)}*,%0A%0AYour policy *${encodeURIComponent(row.policyNo)}* (${encodeURIComponent(row.insurer)}) is due for renewal on *${encodeURIComponent(row.expiry)}*.%0A%0AEst Renewal Premium: *${encodeURIComponent(row.est)}*.%0A%0APlease contact *Chandrakant Kadadi* at Kadadi Motors Bidar to renew today and keep your coverage active!`;
+                            const waUrl = `https://wa.me/91${row.phone.replace(/[^0-9]/g, '')}?text=${msg}`;
+                            window.open(waUrl, '_blank', 'noopener,noreferrer');
+                          }}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 ml-auto transition-all cursor-pointer"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Send WhatsApp Renewal Notice</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-
-        </div>
+        )}
 
       </div>
 
@@ -1674,7 +2255,7 @@ export const AdminPortal: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-heading font-black text-white">Live Real-time Alerts</h3>
-                    <p className="text-[11px] text-slate-400">Chandu Kadadi Inquiry & Document Alert Log</p>
+                    <p className="text-[11px] text-slate-400">Chandrakant Kadadi Inquiry & Document Alert Log</p>
                   </div>
                 </div>
 

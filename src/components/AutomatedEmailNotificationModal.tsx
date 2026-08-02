@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminEmailNotification } from '../lib/store';
 import { DocumentPreviewItem } from './DocumentPreviewModal';
 import {
@@ -49,6 +49,25 @@ export const AutomatedEmailNotificationModal: React.FC<AutomatedEmailNotificatio
   );
   const [copied, setCopied] = useState(false);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const filteredMails = notifications.filter((mail) => {
@@ -96,7 +115,7 @@ export const AutomatedEmailNotificationModal: React.FC<AutomatedEmailNotificatio
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   Active Automated Email Service
                 </span>
-                <span className="text-xs text-slate-400 hidden sm:inline">• Destination: <strong className="text-amber-300 font-mono">chandu.kadadi@kadadimotors.com</strong></span>
+                <span className="text-xs text-slate-400 hidden sm:inline">• Destination: <strong className="text-amber-300 font-mono">chandrakant.kadadi@kadadimotors.com</strong></span>
               </div>
               <h3 id="email-service-modal-title" className="text-lg sm:text-xl font-heading font-black text-white mt-0.5">
                 Automated Document Upload Email Dispatch Hub

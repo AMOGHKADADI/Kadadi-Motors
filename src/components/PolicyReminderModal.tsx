@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Clock,
@@ -22,6 +22,25 @@ export const PolicyReminderModal: React.FC<PolicyReminderModalProps> = ({ isOpen
   const [expiryDate, setExpiryDate] = useState('');
   const [policyType, setPolicyType] = useState('Motor Vehicle Insurance');
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -177,9 +196,10 @@ END:VCALENDAR`;
                 <input
                   type="date"
                   required
+                  min={new Date().toISOString().split('T')[0]}
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400 font-mono"
                 />
               </div>
 
@@ -188,7 +208,7 @@ END:VCALENDAR`;
                 className="w-full py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs shadow-lg flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                <span>Save Reminder & Notify Chandu Kadadi Sir</span>
+                <span>Save Reminder & Notify Chandrakant Kadadi Sir</span>
               </button>
             </form>
           )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   X,
   Award,
@@ -126,6 +126,25 @@ export const KmRewardsCriteriaModal: React.FC<KmRewardsCriteriaModalProps> = ({
   onOpenChecklist,
   onOpenReferral
 }) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
@@ -282,7 +301,7 @@ export const KmRewardsCriteriaModal: React.FC<KmRewardsCriteriaModalProps> = ({
         {/* Modal Action Footer */}
         <div className="p-5 bg-slate-950 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-slate-400 text-center sm:text-left">
-            Need help accumulating points? Contact Chandu Kadadi Sir on WhatsApp.
+            Need help accumulating points? Contact Chandrakant Kadadi Sir on WhatsApp.
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">

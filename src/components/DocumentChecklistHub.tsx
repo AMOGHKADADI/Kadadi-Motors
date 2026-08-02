@@ -77,7 +77,7 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
   const handleSubmitInquiryAndWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim() || !customerPhone.trim()) {
-      alert('Please enter your Name and Mobile Number to send inquiry to Chandu Kadadi Sir.');
+      alert('Please enter your Name and Mobile Number to send inquiry to Chandrakant Kadadi Sir.');
       return;
     }
 
@@ -167,20 +167,20 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
         
         {/* Section Title Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-500/30 text-amber-300 text-xs font-extrabold uppercase tracking-widest">
-            <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-200 text-xs font-black uppercase tracking-widest">
+            <Sparkles className="w-4 h-4 text-orange-300" aria-hidden="true" />
             <span>Interactive Document Checklist Helper Tool</span>
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-heading font-black text-white tracking-tight">
             Check Your Required Documents & <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 bg-clip-text text-transparent">
+            <span className="text-orange-200">
               Send Directly to Chandrakant Kadadi Sir
             </span>
           </h2>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Designed for 100% ease of use. Simply select what documents you already have and what you need help with. We automatically format your inquiry and send it directly to Chandu Kadadi Sir's WhatsApp!
+            Designed for 100% ease of use. Simply select what documents you already have and what you need help with. We automatically format your inquiry and send it directly to Chandrakant Kadadi Sir's WhatsApp!
           </p>
         </div>
 
@@ -193,8 +193,8 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
             {/* Step 1: Insurance Category Selection */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-extrabold text-[11px]">1</span>
+                <label className="text-xs font-black text-orange-200 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold text-[11px]">1</span>
                   <span>Select Insurance Category</span>
                 </label>
                 <span className="text-[11px] text-slate-400 font-medium">All Insurance Sectors Covered</span>
@@ -212,9 +212,9 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                           setSelectedPurposeId(cat.purposes[0].id);
                         }
                       }}
-                      className={`p-3.5 rounded-2xl border text-xs font-extrabold transition-all duration-200 flex flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
+                      className={`p-3.5 rounded-2xl border text-xs font-extrabold transition-all duration-200 flex flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 cursor-pointer ${
                         isSelected
-                          ? 'bg-gradient-to-b from-amber-400 to-amber-500 text-slate-950 border-amber-300 shadow-lg shadow-amber-500/10 scale-102'
+                          ? 'bg-blue-600 text-white border-blue-400 shadow-lg shadow-blue-600/20 scale-102'
                           : 'bg-slate-950/80 text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-950'
                       }`}
                     >
@@ -229,8 +229,8 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
             {/* Step 2: Application / Claim Type */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-extrabold text-[11px]">2</span>
+                <label className="text-xs font-black text-orange-200 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold text-[11px]">2</span>
                   <span>Select Specific Requirement</span>
                 </label>
               </div>
@@ -293,8 +293,8 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
             {/* Step 3: Interactive Visual Checklist Items */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-extrabold text-[11px]">3</span>
+                <label className="text-xs font-black text-orange-200 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold text-[11px]">3</span>
                   <span>Tap Each Document You Have Ready</span>
                 </label>
                 <span className="text-[11px] text-slate-400">Tap to toggle Ready vs Pending</span>
@@ -363,19 +363,19 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
 
           </div>
 
-          {/* Right Column: Send to Chandu Kadadi Sir WhatsApp Form */}
-          <div className="lg:col-span-4 glass-panel amber-glow p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-2xl space-y-6 sticky top-24">
+          {/* Right Column: Send to Chandrakant Kadadi Sir WhatsApp Form */}
+          <div className="lg:col-span-4 bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6 sticky top-24 backdrop-blur-xl">
             
             <div className="space-y-2 border-b border-slate-800 pb-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">
-                <MessageSquare className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-                <span>Goated 1-Tap WhatsApp Engine</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 text-[11px] font-bold">
+                <MessageSquare className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
+                <span>1-Tap Direct WhatsApp Desk</span>
               </div>
               <h3 className="text-xl font-heading font-black text-white">
-                Send to Chandu Kadadi Sir
+                Send to Chandrakant Kadadi Sir
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Fill your details below to submit this document checklist directly to Chandrakant Kadadi's personal desk and earn <strong className="text-amber-400 font-extrabold">+100 KM Points</strong>!
+                Enter your details below to send this formatted document checklist directly to Chandrakant Kadadi's official WhatsApp desk for instant assistance.
               </p>
             </div>
 
@@ -384,18 +384,15 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                 <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
                   <Award className="w-6 h-6" aria-hidden="true" />
                 </div>
-                <h4 className="text-lg font-heading font-extrabold text-white">Inquiry Sent Successfully!</h4>
+                <h4 className="text-lg font-heading font-extrabold text-white">Inquiry Formatted & Sent!</h4>
                 <p className="text-xs text-emerald-200">
                   Your document checklist has been formatted and submitted. WhatsApp has opened to message Chandrakant Kadadi Sir.
                 </p>
-                <div className="p-3 rounded-xl bg-amber-400/20 border border-amber-400/40 text-amber-300 text-xs font-bold">
-                  🎉 +{earnedPoints} KM Points Credited To Your Account!
-                </div>
                 <button
                   onClick={() => setSubmittedSuccess(false)}
-                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all mt-2"
+                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all mt-2 cursor-pointer"
                 >
-                  Send Another Inquiry
+                  Send Another Checklist
                 </button>
               </div>
             ) : (
@@ -410,7 +407,7 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="e.g., Veeresh Patil"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -424,7 +421,7 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="e.g., 98451 22345"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -437,7 +434,7 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                     value={vehicleNo}
                     onChange={(e) => setVehicleNo(e.target.value)}
                     placeholder="e.g., KA-38-M-4512"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-amber-400"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 text-white border border-slate-800 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -445,7 +442,7 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                 <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2 text-xs">
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Selected Sector:</span>
-                    <strong className="text-amber-400">{currentCategory.title}</strong>
+                    <strong className="text-orange-200">{currentCategory.title}</strong>
                   </div>
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Ready Documents:</span>
@@ -453,16 +450,16 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
                   </div>
                   <div className="flex items-center justify-between text-slate-400">
                     <span>Pending / Need Help:</span>
-                    <strong className="text-amber-300">{pendingDocs.length} Files</strong>
+                    <strong className="text-orange-300">{pendingDocs.length} Files</strong>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-500 hover:from-emerald-400 hover:to-emerald-500 text-white font-extrabold text-xs shadow-xl shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 transform active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                  className="w-full py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs shadow-xl shadow-blue-600/20 transition-all flex items-center justify-center gap-2 transform active:scale-98 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 cursor-pointer"
                 >
                   <Send className="w-4 h-4" aria-hidden="true" />
-                  <span>Send Checklist to Chandu Kadadi Sir</span>
+                  <span>Send Checklist to Chandrakant Kadadi Sir</span>
                 </button>
 
                 <p className="text-[10px] text-center text-slate-400">
@@ -473,10 +470,10 @@ export const DocumentChecklistHub: React.FC<DocumentChecklistHubProps> = ({
 
             <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
               <span className="flex items-center gap-1.5">
-                <PhoneCall className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
+                <PhoneCall className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
                 <span>Direct Hotline:</span>
               </span>
-              <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="font-bold text-amber-400 hover:underline">
+              <a href={`tel:${BUSINESS_INFO.phoneRaw}`} className="font-bold text-blue-400 hover:underline">
                 {BUSINESS_INFO.phoneDisplay}
               </a>
             </div>
