@@ -1,17 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PARTNER_INSURERS } from '../data/insuranceData';
-import { Shield, CheckCircle2, ExternalLink, Sparkles, TrendingUp, Award, Building2, Zap, Scale } from 'lucide-react';
+import { Shield, CheckCircle2, ExternalLink, TrendingUp, Building2, Zap, Scale, Star, Sparkles } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { auditLogger } from '../lib/auditLogger';
 
 export const PartnersSection: React.FC = () => {
+  const [activeHoverPartner, setActiveHoverPartner] = useState<string | null>(null);
+
   return (
-    <section id="partners" className="py-20 sm:py-32 bg-black text-white relative overflow-hidden border-b border-white/10">
-      
+    <section id="partners" className="py-20 sm:py-32 bg-slate-950 text-white relative overflow-hidden border-b border-white/10">
       {/* Background Ambient Orbs */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-red-600/10 rounded-full blur-[120px] pointer-events-none" />
 
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
-        
         {/* Module Header */}
         <div className="text-center max-w-3xl mx-auto space-y-5">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest text-blue-400 bg-blue-950/60 border border-blue-500/30 backdrop-blur-xl shadow-lg">
@@ -32,33 +37,50 @@ export const PartnersSection: React.FC = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {PARTNER_INSURERS.map((partner, index) => {
             const isBlueTheme = index % 2 === 0;
+            const isHovered = activeHoverPartner === partner.id;
+
             return (
-              <div
+              <motion.div
                 key={partner.id}
-                className={`group relative bg-white/5 backdrop-blur-2xl rounded-3xl p-7 border transition-all duration-300 flex flex-col justify-between space-y-6 shadow-2xl hover:-translate-y-2 overflow-hidden shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] ${
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                whileHover={{ scale: 1.03 }}
+                onHoverStart={() => {
+                  setActiveHoverPartner(partner.id);
+                  auditLogger.log('SYSTEM', 'Partner card hovered', { partnerId: partner.id, partnerName: partner.name });
+                }}
+                onHoverEnd={() => setActiveHoverPartner(null)}
+                className={`group relative bg-slate-900/80 backdrop-blur-2xl rounded-3xl p-7 border transition-all duration-300 flex flex-col justify-between space-y-6 shadow-2xl overflow-hidden cursor-pointer ${
                   isBlueTheme
-                    ? 'border-white/10 hover:border-blue-500/60 hover:shadow-blue-500/15'
-                    : 'border-white/10 hover:border-red-500/60 hover:shadow-red-500/15'
+                    ? 'border-white/10 hover:border-blue-500/60 hover:shadow-blue-500/20'
+                    : 'border-white/10 hover:border-red-500/60 hover:shadow-red-500/20'
                 }`}
               >
                 {/* Subtle Card Glow Effect */}
-                <div className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-2xl transition-opacity duration-300 opacity-20 group-hover:opacity-60 ${
-                  isBlueTheme ? 'bg-blue-600' : 'bg-red-600'
-                }`} />
+                <div
+                  className={`absolute -top-24 -right-24 w-48 h-48 rounded-full blur-2xl transition-opacity duration-300 opacity-20 group-hover:opacity-70 ${
+                    isBlueTheme ? 'bg-blue-600' : 'bg-red-600'
+                  }`}
+                />
 
                 <div className="space-y-5 relative z-10">
-                  
-                  {/* Category & Badge Row */}
+                  {/* Category & Logo Hover Transition Badge */}
                   <div className="flex items-center justify-between">
-                    <div className="px-3.5 py-1.5 rounded-xl text-xs font-heading font-black tracking-wider bg-white/10 text-white border border-white/20 backdrop-blur-md shadow-sm">
-                      {partner.shortName}
+                    {/* Grayscale to full opacity hover logo badge with subtle scale animation */}
+                    <div className="px-3.5 py-1.5 rounded-xl text-xs font-heading font-black tracking-wider bg-white/10 text-white border border-white/20 backdrop-blur-md shadow-sm transition-all duration-300 transform group-hover:scale-105 filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span>{partner.shortName}</span>
                     </div>
 
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border backdrop-blur-xs ${
-                      isBlueTheme
-                        ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
-                        : 'bg-red-500/15 text-red-300 border-red-500/30'
-                    }`}>
+                    <span
+                      className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border backdrop-blur-xs transition-colors ${
+                        isBlueTheme
+                          ? 'bg-blue-500/15 text-blue-300 border-blue-500/30 group-hover:bg-blue-500/25'
+                          : 'bg-red-500/15 text-red-300 border-red-500/30 group-hover:bg-red-500/25'
+                      }`}
+                    >
                       {partner.category}
                     </span>
                   </div>
@@ -83,34 +105,45 @@ export const PartnersSection: React.FC = () => {
                   <div className="space-y-2.5 pt-3 border-t border-white/10">
                     {partner.highlights.map((item, idx) => (
                       <div key={idx} className="flex items-center gap-2.5 text-[11px] text-slate-200 font-medium">
-                        <CheckCircle2 className={`w-4 h-4 shrink-0 ${
-                          idx === 0 ? (isBlueTheme ? 'text-blue-400' : 'text-red-400') : 'text-emerald-400'
-                        }`} />
+                        <CheckCircle2
+                          className={`w-4 h-4 shrink-0 transition-transform ${
+                            idx === 0
+                              ? isBlueTheme
+                                ? 'text-blue-400'
+                                : 'text-red-400'
+                              : 'text-emerald-400'
+                          } ${isHovered ? 'scale-110' : ''}`}
+                        />
                         <span>{item}</span>
                       </div>
                     ))}
                   </div>
-
                 </div>
 
                 {/* Card Footer */}
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono relative z-10">
-                  <span className="text-slate-400">100% Unbiased</span>
+                  <span className="text-slate-400 flex items-center gap-1">
+                    <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                    <span>100% Unbiased</span>
+                  </span>
                   <span className="text-blue-400 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
                     <span>Compare Live</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </span>
                 </div>
-
-              </div>
+              </motion.div>
             );
           })}
         </div>
 
         {/* Independence & Trust Guarantee Banner */}
-        <div className="relative rounded-3xl bg-gradient-to-r from-blue-950/40 via-black to-red-950/40 backdrop-blur-2xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] p-8 sm:p-10 shadow-2xl overflow-hidden">
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 items-center text-center md:text-left">
-            
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative rounded-3xl bg-gradient-to-r from-blue-950/40 via-slate-900 to-red-950/40 backdrop-blur-2xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] p-8 sm:p-10 shadow-2xl overflow-hidden"
+        >
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 items-center text-center md:text-left relative z-10">
             <div className="flex flex-col sm:flex-row items-center gap-4 md:col-span-2">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/30 to-red-600/30 border border-white/20 flex items-center justify-center text-white shrink-0 shadow-xl">
                 <Shield className="w-7 h-7 text-blue-400" />
@@ -135,12 +168,9 @@ export const PartnersSection: React.FC = () => {
                 <span>Instant Cashless Desk</span>
               </div>
             </div>
-
           </div>
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );
 };
-
