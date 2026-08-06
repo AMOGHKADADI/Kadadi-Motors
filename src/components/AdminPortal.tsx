@@ -736,7 +736,7 @@ export const AdminPortal: React.FC = () => {
         <div className="max-w-md w-full bg-slate-900/90 rounded-3xl p-8 border border-amber-500/40 shadow-2xl space-y-6 relative z-10 backdrop-blur-xl">
           <div className="text-center space-y-3">
             <div className="inline-flex items-center gap-3">
-              <img src={logoImg} alt="Kadadi Motors" className="w-12 h-12 rounded-xl border border-amber-400/40 object-contain" />
+              <img src={(logoImg as any)?.src || logoImg} alt="Kadadi Motors" className="w-12 h-12 rounded-xl border border-amber-400/40 object-contain" />
               <div className="text-left">
                 <span className="text-[10px] uppercase tracking-widest text-amber-400 font-extrabold block">Executive Portal</span>
                 <h3 className="text-xl font-heading font-black text-white">Chandrakant Kadadi Admin</h3>
@@ -802,7 +802,7 @@ export const AdminPortal: React.FC = () => {
         {/* Admin Header Bar */}
         <div className="p-6 rounded-3xl bg-slate-900 border border-amber-500/30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 shadow-2xl">
           <div className="flex items-center gap-4">
-            <img src={logoImg} alt="Kadadi Motors" className="w-14 h-14 rounded-2xl border border-amber-400/40 object-contain shrink-0" />
+            <img src={(logoImg as any)?.src || logoImg} alt="Kadadi Motors" className="w-14 h-14 rounded-2xl border border-amber-400/40 object-contain shrink-0" />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-black uppercase">

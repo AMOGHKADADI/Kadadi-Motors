@@ -33,7 +33,7 @@ export const Hero: React.FC<HeroProps> = ({
       {/* Background Image Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroImg}
+          src={(heroImg as any)?.src || heroImg}
           alt="Kadadi Motors Advisory Background"
           className="w-full h-full object-cover object-center opacity-20 mix-blend-luminosity scale-105 transition-transform duration-1000"
           referrerPolicy="no-referrer"

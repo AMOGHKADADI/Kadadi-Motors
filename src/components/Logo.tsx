@@ -18,7 +18,7 @@ export const Logo: React.FC<LogoProps> = ({
     return (
       <div className={`flex flex-col items-center text-center p-4 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl ${className}`}>
         <img
-          src={logoImg}
+          src={(logoImg as any)?.src || logoImg}
           alt="Kadadi Motors Official Logo Badge"
           className="w-24 sm:w-28 h-auto object-contain drop-shadow-md mb-2 rounded-xl"
           referrerPolicy="no-referrer"
@@ -47,7 +47,7 @@ export const Logo: React.FC<LogoProps> = ({
     return (
       <div className={`inline-flex items-center justify-center ${className}`}>
         <img
-          src={logoImg}
+          src={(logoImg as any)?.src || logoImg}
           alt="Kadadi Motors Emblem"
           className="w-10 h-10 object-contain rounded-lg drop-shadow-sm transition-transform duration-300 hover:scale-105"
           referrerPolicy="no-referrer"
@@ -61,7 +61,7 @@ export const Logo: React.FC<LogoProps> = ({
       {/* Logo Image Emblem */}
       <div className="relative shrink-0">
         <img
-          src={logoImg}
+          src={(logoImg as any)?.src || logoImg}
           alt="Kadadi Motors Emblem"
           className="w-10 h-10 sm:w-11 sm:h-11 object-contain rounded-xl border border-slate-800"
           referrerPolicy="no-referrer"

@@ -236,7 +236,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="ml-auto w-full max-w-xs h-full bg-slate-950 border-l border-slate-800 shadow-2xl flex flex-col p-6 overflow-y-auto space-y-6 text-white">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div className="flex items-center gap-2">
-                <img src={logoImg} alt="Logo" className="w-8 h-8 rounded-lg object-contain border border-slate-800" />
+                <img src={(logoImg as any)?.src || logoImg} alt="Logo" className="w-8 h-8 rounded-lg object-contain border border-slate-800" />
                 <span className="font-heading font-black text-sm text-white">Kadadi Motors</span>
               </div>
               <button onClick={() => setMobileMenuOpen(false)} className="text-slate-400 min-h-[44px] min-w-[44px] flex items-center justify-center">

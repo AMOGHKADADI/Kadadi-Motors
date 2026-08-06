@@ -54,7 +54,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenQuoteModal }) 
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <img
-                    src={logoImg}
+                    src={(logoImg as any)?.src || logoImg}
                     alt="Kadadi Motors Official Badge"
                     className="w-12 h-12 object-contain rounded-xl border border-slate-700 shrink-0"
                     referrerPolicy="no-referrer"
@@ -100,7 +100,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onOpenQuoteModal }) 
             {/* Cinematic Desk Imagery Container */}
             <div className="relative rounded-2xl overflow-hidden border border-slate-800 shadow-lg group">
               <img
-                src={deskImg}
+                src={(deskImg as any)?.src || deskImg}
                 alt="Executive Insurance Advisory Desk"
                 className="w-full h-56 sm:h-64 object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
