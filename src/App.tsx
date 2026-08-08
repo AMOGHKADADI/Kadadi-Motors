@@ -35,7 +35,7 @@ import { MessageSquare, PhoneCall, ArrowUp } from 'lucide-react';
 const SECTION_META: Record<string, { title: string; description: string; keywords: string }> = {
   home: {
     title: "Kadadi Insurance Advisory | Bidar's Trusted Insurance & Motor Desk",
-    description: "Chandrakant Kadadi brings 30+ years of insurance expertise in Bidar for Motor, Health, Commercial, Life, & Claims settlement assistance.",
+    description: "Chandrakant Kadadi brings 25+ years of insurance expertise in Bidar for Motor, Health, Commercial, Life, & Claims settlement assistance.",
     keywords: "Insurance Bidar, Motor Insurance Bidar, Health Insurance, Claim Support, Chandrakant Kadadi, Kadadi Motors",
   },
   'policy-wizard': {
@@ -65,7 +65,7 @@ const SECTION_META: Record<string, { title: string; description: string; keyword
   },
   about: {
     title: "About Chandrakant Kadadi & Advisory Process | Kadadi Motors",
-    description: "Learn about 30+ years of trusted insurance advisory, our 4-step policy guidance process, partner insurers, and FAQs in Bidar.",
+    description: "Learn about 25+ years of trusted insurance advisory, our 4-step policy guidance process, partner insurers, and FAQs in Bidar.",
     keywords: "About Chandrakant Kadadi, Insurance Advisor Bidar, Partner Insurers, Insurance FAQs",
   },
   contact: {
@@ -146,6 +146,36 @@ export default function App() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={currentMeta.title} />
         <meta name="twitter:description" content={currentMeta.description} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FinancialService",
+            "name": "Kadadi Motors & Insurance Advisory",
+            "image": "https://kadadi-motors.app/assets/images/kadadi_motors_logo.jpg",
+            "description": "Independent insurance advisory in Bidar managed by Chandrakant Kadadi for Motor, Health, Commercial Fleet, Property and Life insurance.",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Ground Floor, Rishikesh Complex, Udgir Road, Beside MAX",
+              "addressLocality": "Bidar",
+              "addressRegion": "Karnataka",
+              "postalCode": "585401",
+              "addressCountry": "IN"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 17.9145,
+              "longitude": 77.5186
+            },
+            "url": "https://kadadi-motors.app",
+            "telephone": "+919448114647",
+            "priceRange": "₹₹",
+            "openingHours": "Mo-Sa 10:00-21:00",
+            "founder": {
+              "@type": "Person",
+              "name": "Chandrakant Kadadi"
+            }
+          })}
+        </script>
       </Helmet>
 
       {/* Scroll Reading Progress Bar */}
@@ -179,22 +209,35 @@ export default function App() {
               onNavigate={handleNavigate}
             />
 
-            {/* 2. Trust Stats */}
+            {/* 2. Trust Pillars & Heritage */}
             <TrustStats />
 
-            {/* 3. HIGHLIGHTED PARTNER COMPANIES */}
+            {/* 3. The Advisory Process */}
+            <AdvisoryProcess onOpenQuoteModal={() => handleOpenQuoteModal()} />
+
+            {/* 4. Core Insurance Solutions & Products */}
+            <InsuranceSolutions
+              onSelectSolution={() => handleNavigate('sector-details-view')}
+              onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
+              onOpenDocChecklist={(cat?: string, purpose?: string) => handleOpenDocChecklist(cat, purpose)}
+            />
+
+            {/* 5. Partner Insurers Network */}
             <PartnersSection />
 
-            {/* 4. HIGHLIGHTED FREQUENTLY ASKED QUESTIONS */}
+            {/* 6. Verified Customer Feedback & Local Reputation */}
+            <TestimonialSection />
+
+            {/* 7. Frequently Asked Questions */}
             <FaqSection onOpenQuoteModal={() => handleOpenQuoteModal()} />
 
-            {/* 5. Quick Multi-Page Navigation Hub */}
+            {/* 8. Quick Multi-Page Navigation Hub */}
             <HomeQuickDirectory
               onNavigate={handleNavigate}
               onOpenQuoteModal={(cat?: string) => handleOpenQuoteModal(cat)}
             />
 
-            {/* 6. Contact & Office Location */}
+            {/* 9. Contact & Office Location */}
             <ContactSection />
           </>
         )}

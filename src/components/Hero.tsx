@@ -50,20 +50,18 @@ export const Hero: React.FC<HeroProps> = ({
         {/* Top Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-slate-200 text-xs font-semibold tracking-wide shadow-lg">
           <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0" aria-hidden="true" />
-          <span>Independent Advisory in Bidar • Est. {BUSINESS_INFO.establishedYear}</span>
+          <span>Independent Insurance Advisory in Bidar • Est. {BUSINESS_INFO.establishedYear}</span>
         </div>
 
         {/* Headline */}
         <div className="space-y-5 max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-heading font-black text-white tracking-tight leading-[1.08]">
             Independent Insurance Advice & <br className="hidden sm:inline" />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-white to-red-400">
-              Personal Claim Advocacy
-            </span>
+            <span className="text-blue-400">Personal Claim Advocacy</span>
           </h1>
 
           <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
-            Guided by <strong className="text-white">Chandrakant Kadadi</strong>. Unbiased multi-insurer comparison and end-to-end claim settlement support across Motor, Health, Fleet, and Life protection.
+            Guided by <strong className="text-white font-semibold">Chandrakant Kadadi</strong>. Unbiased multi-insurer comparison and end-to-end claim settlement support across Motor, Health, Fleet, and Life protection.
           </p>
         </div>
 
@@ -107,7 +105,7 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
             <div>
               <h3 className="font-heading font-bold text-white text-sm">Years in Bidar</h3>
-              <p className="text-xs text-slate-400">Serving Bidar & Bhalki since 1998.</p>
+              <p className="text-xs text-slate-400">Serving Bidar & surrounding region since 2000.</p>
             </div>
           </div>
 

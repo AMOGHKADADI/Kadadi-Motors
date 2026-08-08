@@ -10,7 +10,7 @@ export const BUSINESS_INFO = {
   phoneDisplay: '+91 94481 14647',
   phoneRaw: '9448114647',
   whatsappRaw: '9448114647',
-  email: 'chandrakantkadadi@gmail.com',
+  email: 'chandukadadi@gmail.com',
   hours: '10:00 AM – 9:00 PM (Monday to Saturday)',
   googleMapsUrl: 'https://share.google/r2gNsuWmYkmmXmmf0',
   googleRating: 5.0,
